@@ -6,9 +6,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(CPM)
 
-CPMAddPackage("gh:glfw/glfw#3.4")
+add_subdirectory("external/glew")
 
-find_package(OpenGL REQUIRED)
+CPMAddPackage("gh:glfw/glfw#3.4")
 
 add_executable(glabs)
 
@@ -21,7 +21,7 @@ target_sources(
 target_link_libraries(
 	glabs
 	PRIVATE
-	OpenGL::GL
 	glfw
+	glew
 )
 
