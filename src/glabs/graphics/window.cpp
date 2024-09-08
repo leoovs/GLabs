@@ -29,6 +29,7 @@ namespace glabs
 
 	int32_t Window::GetWidth() const
 	{
+		assert(nullptr != mNativeWindow);
 		int width = 0;
 		glfwGetWindowSize(mNativeWindow, &width, nullptr);
 
