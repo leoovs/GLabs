@@ -15,7 +15,15 @@ add_executable(glabs)
 target_sources(
 	glabs
 	PRIVATE
+	"src/glabs/graphics/window.cpp"
+
 	"src/glabs/main.cpp"
+)
+
+target_include_directories(
+	glabs
+	PRIVATE
+	"src"
 )
 
 target_link_libraries(
@@ -23,5 +31,12 @@ target_link_libraries(
 	PRIVATE
 	glfw
 	glew
+)
+
+set_target_properties(
+	glabs
+	PROPERTIES
+	CXX_STANDARD 17
+	CXX_STANDARD_REQUIRED TRUE
 )
 
