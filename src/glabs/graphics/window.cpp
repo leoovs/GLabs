@@ -27,6 +27,11 @@ namespace glabs
 		return *this;
 	}
 
+	Window::~Window()
+	{
+		DestroyNativeWindow();
+	}
+
 	int32_t Window::GetWidth() const
 	{
 		assert(nullptr != mNativeWindow);
@@ -84,6 +89,12 @@ namespace glabs
 		std::string_view title
 	)
 	{
+		// Request the OpenGL v4.6 Core profile.
+		// Sadly, compatibility profile is not supported by RenderDoc.
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 		mNativeWindow = glfwCreateWindow(width, height, title.data(), nullptr, nullptr);
 		assert(nullptr != mNativeWindow);
 	}

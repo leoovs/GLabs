@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "glabs/graphics/window.hpp"
+#include "glabs/graphics/ogl_buffer.hpp"
 
 struct GlfwLife
 {
@@ -34,6 +35,23 @@ int main()
 	);
 
 	std::cout << "OpenGL Version: " <<  glGetString(GL_VERSION) << '\n';
+
+	float vertices[]
+	{
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+		0.5f, 0.5f,
+	};
+
+	glabs::OglBuffer::Params bufParams;
+	bufParams.DebugName = "Test buffer";
+	bufParams.Target = GL_ARRAY_BUFFER;
+	bufParams.ElementSize = sizeof(*vertices);
+	bufParams.ElementCount = std::size(vertices);
+
+	glabs::OglBuffer buf(bufParams);
+	buf.SetData(vertices);
+	buf.BindToPipeline();
 
 	while (running)
 	{

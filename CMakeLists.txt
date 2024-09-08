@@ -15,6 +15,7 @@ add_executable(glabs)
 target_sources(
 	glabs
 	PRIVATE
+	"src/glabs/graphics/ogl_buffer.cpp"
 	"src/glabs/graphics/window.cpp"
 
 	"src/glabs/main.cpp"

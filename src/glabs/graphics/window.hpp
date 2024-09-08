@@ -16,6 +16,8 @@ namespace glabs
 
 		Window& operator=(Window&& other) noexcept;
 
+		~Window();
+
 		int32_t GetWidth() const;
 		int32_t GetHeight() const;
 
