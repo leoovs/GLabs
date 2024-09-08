@@ -26,6 +26,12 @@ target_include_directories(
 	"src"
 )
 
+target_precompile_headers(
+	glabs
+	PRIVATE
+	"src/glabs/pch.hpp"
+)
+
 target_link_libraries(
 	glabs
 	PRIVATE
