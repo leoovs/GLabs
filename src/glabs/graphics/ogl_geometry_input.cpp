@@ -110,6 +110,7 @@ namespace glabs
 				relativeOffsetPerSlot.at(it->InputSlot)
 			);
 			glVertexArrayAttribBinding(mNativeVertexArray, attribIndex, GLuint(it->InputSlot));
+			glEnableVertexArrayAttrib(mNativeVertexArray, attribIndex);
 
 			relativeOffsetPerSlot.at(it->InputSlot) += GetVertexFormatSize(it->Format);
 		}
