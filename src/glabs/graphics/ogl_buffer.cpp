@@ -40,6 +40,11 @@ namespace glabs
 		return mParams.ElementSize * mParams.ElementCount;
 	}
 
+	GLuint OglBuffer::GetNativeBuffer() const
+	{
+		return mNativeBuffer;
+	}
+
 	void OglBuffer::SetData(void* data)
 	{
 		assert(0 != mNativeBuffer);

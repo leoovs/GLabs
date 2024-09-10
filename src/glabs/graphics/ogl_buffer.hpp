@@ -26,6 +26,7 @@ namespace glabs
 
 		const Params& GetParams() const;
 		size_t GetSize() const;
+		GLuint GetNativeBuffer() const;
 
 		void SetData(void* data);
 
