@@ -5,6 +5,7 @@
 
 #include "glabs/graphics/window.hpp"
 #include "glabs/graphics/ogl_buffer.hpp"
+#include "glabs/graphics/ogl_geometry_input.hpp"
 
 struct GlfwLife
 {
@@ -49,9 +50,19 @@ int main()
 	bufParams.ElementSize = sizeof(*vertices);
 	bufParams.ElementCount = std::size(vertices);
 
-	glabs::OglBuffer buf(bufParams);
+	glabs::OglBuffer buf(std::move(bufParams));
 	buf.SetData(vertices);
-	buf.BindToPipeline();
+
+	glabs::OglGeometryInput::Params ogiParams;
+	ogiParams.DebugName = "Test geomtry input";
+	ogiParams.VertexBuffers[1] = &buf;
+	ogiParams.IndexBuffer = nullptr;
+	ogiParams.Vertices = {
+		glabs::VertexParams{ 1, glabs::VertexFormat::Float2 }
+	};
+
+	glabs::OglGeometryInput ogi(std::move(ogiParams));
+	ogi.BindToPipeline();
 
 	while (running)
 	{
