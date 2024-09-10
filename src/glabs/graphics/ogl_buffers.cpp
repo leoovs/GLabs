@@ -35,5 +35,10 @@ namespace glabs
 	{
 		return std::distance(mBuffers.begin(), it);
 	}
+
+	size_t OglBuffers::Size() const
+	{
+		return mBuffers.size();
+	}
 }
 

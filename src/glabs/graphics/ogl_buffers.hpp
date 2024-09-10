@@ -20,6 +20,7 @@ namespace glabs
 		Iterator end() const;
 
 		size_t GetSlotFromIterator(Iterator it) const;
+		size_t Size() const;
 
 	private:
 		OglBuffer*& Emplace(size_t slot);
