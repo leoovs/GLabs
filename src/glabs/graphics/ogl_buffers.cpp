@@ -20,5 +20,20 @@ namespace glabs
 		}
 		return mBuffers.at(slot);
 	}
+
+	OglBuffers::Iterator OglBuffers::begin() const
+	{
+		return mBuffers.cbegin();
+	}
+
+	OglBuffers::Iterator OglBuffers::end() const
+	{
+		return mBuffers.cend();
+	}
+
+	size_t OglBuffers::GetSlotFromIterator(Iterator it) const
+	{
+		return std::distance(mBuffers.begin(), it);
+	}
 }
 

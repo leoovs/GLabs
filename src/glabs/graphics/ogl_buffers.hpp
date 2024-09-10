@@ -7,14 +7,24 @@ namespace glabs
 {
 	class OglBuffers
 	{
+	private:
+		using Container = std::vector<OglBuffer*>;
+
 	public:
+		using Iterator = Container::const_iterator;
+
 		OglBuffer*& operator[](size_t slot);
 		OglBuffer* operator[](size_t slot) const;
+
+		Iterator begin() const;
+		Iterator end() const;
+
+		size_t GetSlotFromIterator(Iterator it) const;
 
 	private:
 		OglBuffer*& Emplace(size_t slot);
 
-		std::vector<OglBuffer*> mBuffers;
+		Container mBuffers;
 	};
 }
 
