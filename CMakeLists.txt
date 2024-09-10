@@ -16,6 +16,7 @@ target_sources(
 	glabs
 	PRIVATE
 	"src/glabs/graphics/ogl_buffer.cpp"
+	"src/glabs/graphics/ogl_buffers.cpp"
 	"src/glabs/graphics/ogl_geometry_input.cpp"
 	"src/glabs/graphics/window.cpp"
 

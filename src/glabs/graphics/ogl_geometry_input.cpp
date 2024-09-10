@@ -2,7 +2,8 @@
 
 namespace glabs
 {
-	OglGeometryInput::OglGeometryInput()
+	OglGeometryInput::OglGeometryInput(Params params)
+		: mParams(std::move(params))
 	{
 		CreateNativeVertexArray();
 	}
