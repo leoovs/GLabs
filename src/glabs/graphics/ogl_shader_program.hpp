@@ -8,6 +8,8 @@ namespace glabs
 	{
 		Vertex,
 		Fragment,
+
+		Count_,
 	};
 
 	constexpr GLenum GetNativeShaderType(ShaderStage stage)

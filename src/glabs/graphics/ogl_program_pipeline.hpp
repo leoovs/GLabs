@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glabs/pch.hpp"
+#include "glabs/graphics/ogl_shader_program.hpp"
 
 namespace glabs
 {
