@@ -20,9 +20,9 @@ namespace glabs
 			return GL_VERTEX_SHADER;
 		case ShaderStage::Fragment:
 			return GL_FRAGMENT_SHADER;
+		default:
+			return 0;
 		}
-
-		return 0;
 	}
 
 	constexpr GLbitfield GetNativeShaderStageBit(ShaderStage stage)
@@ -33,9 +33,9 @@ namespace glabs
 			return GL_VERTEX_SHADER_BIT;
 		case ShaderStage::Fragment:
 			return GL_FRAGMENT_SHADER_BIT;
+		default:
+			return 0;
 		}
-
-		return 0;
 	}
 
 	class OglShaderProgram
