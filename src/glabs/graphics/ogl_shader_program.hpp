@@ -72,6 +72,8 @@ namespace glabs
 		~OglShaderProgram();
 
 		void SetUniform(const std::string& name, float value);
+		void SetUniform(const std::string& name, float x1, float x2);
+		void SetUniform(const std::string& name, float x1, float x2, float x3);
 
 		const Params& GetParams() const;
 		GLuint GetNativeShaderProgram() const;
