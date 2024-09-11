@@ -8,6 +8,8 @@ namespace glabs
 {
 	TriangleApplication::TriangleApplication()
 	{
+		std::cerr << glGetString(GL_VERSION) << '\n';
+
 		mAppWindow.SetCloseCallback([this](){ mRunning = false; });
 
 		glEnable(GL_DEBUG_OUTPUT);
