@@ -6,6 +6,7 @@
 #include <functional>
 #include <utility>
 
+#include <array>
 #include <string>
 #include <string_view>
 
