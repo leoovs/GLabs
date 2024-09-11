@@ -27,6 +27,7 @@ namespace glabs
 
 		std::unique_ptr<glabs::OglBuffer> mVerticesBuffer;
 		std::unique_ptr<glabs::OglBuffer> mColorBuffer;
+		std::unique_ptr<glabs::OglBuffer> mIndexBuffer;
 		std::unique_ptr<glabs::OglGeometryInput> mTriangleInput;
 		std::unique_ptr<glabs::OglProgramPipeline> mShaders;
 		std::unique_ptr<glabs::OglShaderProgram> mVertexShader;
@@ -47,6 +48,8 @@ namespace glabs
 		};
 
 		float mTriangleTone[3]{ 3.0f, 0.5f, 0.5f };
+
+		uint32_t mTriangleIndices[3]{ 0, 1, 2 };
 	};
 }
 

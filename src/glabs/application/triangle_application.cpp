@@ -42,7 +42,7 @@ namespace glabs
 		mTriangleInput->BindToPipeline();
 
 		glViewport(0, 0, mAppWindow.GetWidth(), mAppWindow.GetHeight());
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
 		mAppWindow.Present();
 	}
@@ -67,13 +67,22 @@ namespace glabs
 		mColorBuffer = std::make_unique<glabs::OglBuffer>(std::move(colorBufferParams));
 		mColorBuffer->SetData(mTriangleVertexColors);
 
+		glabs::OglBuffer::Params indexBufferParams;
+		indexBufferParams.DebugName = "Triangle indices";
+		indexBufferParams.Target = GL_ELEMENT_ARRAY_BUFFER;
+		indexBufferParams.ElementSize = sizeof(uint32_t);
+		indexBufferParams.ElementCount = 3;
+
+		mIndexBuffer = std::make_unique<glabs::OglBuffer>(std::move(indexBufferParams));
+		mIndexBuffer->SetData(mTriangleIndices);
+
 		glabs::OglGeometryInput::Params triangleGeometryInputParams;
 		triangleGeometryInputParams.DebugName = "Triangle geometry input";
 		triangleGeometryInputParams.Vertices = {
 			glabs::VertexParams{ 0, glabs::VertexFormat::Float3 }, //< Vertex positions.
 			glabs::VertexParams{ 1, glabs::VertexFormat::Float3 }, //< Vertex colors.
 		};
-		triangleGeometryInputParams.IndexBuffer = nullptr;
+		triangleGeometryInputParams.IndexBuffer = mIndexBuffer.get();
 		triangleGeometryInputParams.VertexBuffers[0] = mVerticesBuffer.get();
 		triangleGeometryInputParams.VertexBuffers[1] = mColorBuffer.get();
 
