@@ -38,6 +38,20 @@ namespace glabs
 		}
 	}
 
+	class OglUniformLocationCache
+	{
+	public:
+		static constexpr GLint cInvalidUniformLocation = -1;
+
+		void SetNativeShaderProgram(GLuint nativeShaderProgram);
+
+		GLint GetUniformLocation(const std::string& uniformName) const;
+
+	private:
+		GLuint mNativeShaderProgram = 0;
+		mutable std::unordered_map<std::string, GLint> mCachedLocations;
+	};
+
 	class OglShaderProgram
 	{
 	public:
@@ -57,6 +71,8 @@ namespace glabs
 
 		~OglShaderProgram();
 
+		void SetUniform(const std::string& name, float value);
+
 		const Params& GetParams() const;
 		GLuint GetNativeShaderProgram() const;
 
@@ -66,6 +82,7 @@ namespace glabs
 
 		Params mParams;
 		GLuint mNativeShaderProgram;
+		OglUniformLocationCache mUniformLocationCache;
 	};
 }
 

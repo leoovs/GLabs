@@ -70,6 +70,8 @@ int main()
 	vertexShaderParams.Stage = glabs::ShaderStage::Vertex;
 	vertexShaderParams.Source =
 R"(
+uniform float inX;
+
 out gl_PerVertex
 {
 	vec4 gl_Position;
@@ -77,11 +79,12 @@ out gl_PerVertex
 
 void main()
 {
-	gl_Position = vec4(1.0f, 1.0f, 0.0f, 0.0f);
+	gl_Position = vec4(inX, 1.0f, 0.0f, 0.0f);
 }
 )";
 
 	glabs::OglShaderProgram vertexShader(std::move(vertexShaderParams));
+	vertexShader.SetUniform("inX", 1.0f);
 
 	glabs::OglProgramPipeline::Params progPipelineParams;
 	progPipelineParams.DebugName = "My program pipeline";
