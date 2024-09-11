@@ -3,9 +3,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "glabs/graphics/window.hpp"
 #include "glabs/graphics/ogl_buffer.hpp"
 #include "glabs/graphics/ogl_geometry_input.hpp"
+#include "glabs/graphics/ogl_program_pipeline.hpp"
+#include "glabs/graphics/window.hpp"
 
 struct GlfwLife
 {
@@ -63,6 +64,12 @@ int main()
 
 	glabs::OglGeometryInput ogi(std::move(ogiParams));
 	ogi.BindToPipeline();
+
+	glabs::OglProgramPipeline::Params progPipelineParams;
+	progPipelineParams.DebugName = "My program pipeline";
+
+	glabs::OglProgramPipeline progPipeline(std::move(progPipelineParams));
+	progPipeline.BindToPipeline();
 
 	while (running)
 	{
