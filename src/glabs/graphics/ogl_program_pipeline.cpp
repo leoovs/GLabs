@@ -1,7 +1,53 @@
 #include "glabs/graphics/ogl_program_pipeline.hpp"
+#include "glabs/graphics/ogl_shader_program.hpp"
+#include "glabs/pch.hpp"
 
 namespace glabs
 {
+	//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//
+	// OglShaderProgramSetter
+	//
+	//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+	OglShaderProgramSetter::OglShaderProgramSetter(
+		ShaderStage stage,
+		OglShaderProgramUsage& usage,
+		GLuint nativeProgramPipeline
+	)
+		: mSettingStage(stage)
+		, mUsage(&usage)
+		, mNativeProgramPipeline(nativeProgramPipeline)
+	{}
+
+	void OglShaderProgramSetter::Set(OglShaderProgram& program)
+	{
+		ShaderStage stage = program.GetParams().Stage;
+		assert(stage == mSettingStage);
+
+		GLbitfield nativeStageBit = GetNativeShaderStageBit(stage);
+		glUseProgramStages(
+			mNativeProgramPipeline,
+			nativeStageBit,
+			program.GetNativeShaderProgram()
+		);
+
+		mUsage->Programs[size_t(stage)] = &program;
+	}
+
+	void OglShaderProgramSetter::Unset()
+	{
+		GLbitfield nativeStageBit = GetNativeShaderStageBit(mSettingStage);
+		glUseProgramStages(mNativeProgramPipeline, nativeStageBit, 0);
+		mUsage->Programs[size_t(mSettingStage)] = nullptr;
+	}
+
+	//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	//
+	// OglProgramPipeline
+	//
+	//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
 	OglProgramPipeline::OglProgramPipeline(Params params)
 		: mParams(std::move(params))
 	{
@@ -38,6 +84,11 @@ namespace glabs
 	void OglProgramPipeline::BindToPipeline()
 	{
 		glBindProgramPipeline(mNativeProgramPipeline);
+	}
+
+	OglShaderProgramSetter OglProgramPipeline::operator[](ShaderStage stage)
+	{
+		return OglShaderProgramSetter(stage, mUsage, mNativeProgramPipeline);
 	}
 
 	void OglProgramPipeline::CreateNativeProgramPipeline()

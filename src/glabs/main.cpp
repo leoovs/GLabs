@@ -65,10 +65,29 @@ int main()
 	glabs::OglGeometryInput ogi(std::move(ogiParams));
 	ogi.BindToPipeline();
 
+	glabs::OglShaderProgram::Params vertexShaderParams;
+	vertexShaderParams.DebugName = "My Vertex Shader";
+	vertexShaderParams.Stage = glabs::ShaderStage::Vertex;
+	vertexShaderParams.Source =
+R"(
+out gl_PerVertex
+{
+	vec4 gl_Position;
+};
+
+void main()
+{
+	gl_Position = vec4(1.0f, 1.0f, 0.0f, 0.0f);
+}
+)";
+
+	glabs::OglShaderProgram vertexShader(std::move(vertexShaderParams));
+
 	glabs::OglProgramPipeline::Params progPipelineParams;
 	progPipelineParams.DebugName = "My program pipeline";
 
 	glabs::OglProgramPipeline progPipeline(std::move(progPipelineParams));
+	progPipeline[glabs::ShaderStage::Vertex].Set(vertexShader);
 	progPipeline.BindToPipeline();
 
 	while (running)

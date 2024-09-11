@@ -49,6 +49,13 @@ namespace glabs
 			1,
 			source
 		);
+
+		glObjectLabel(
+			GL_PROGRAM,
+			mNativeShaderProgram,
+			GLsizei(mParams.DebugName.length()),
+			mParams.DebugName.data()
+		);
 	}
 
 	void OglShaderProgram::DestroyNativeShaderProgram()
