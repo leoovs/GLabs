@@ -94,6 +94,11 @@ namespace glabs
 		return mNativeProgramPipeline;
 	}
 
+	void OglProgramPipeline::SetProgram(OglShaderProgram& program)
+	{
+		(*this)[program.GetParams().Stage].Set(program);
+	}
+
 	void OglProgramPipeline::BindToPipeline()
 	{
 		glBindProgramPipeline(mNativeProgramPipeline);

@@ -48,6 +48,8 @@ namespace glabs
 
 		GLuint GetNativeProgramPipeline() const;
 
+		void SetProgram(OglShaderProgram& program);
+
 		void BindToPipeline();
 
 		OglShaderProgramSetter operator[](ShaderStage stage);

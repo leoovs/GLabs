@@ -100,7 +100,7 @@ void main()
 	progPipelineParams.DebugName = "My program pipeline";
 
 	glabs::OglProgramPipeline progPipeline(std::move(progPipelineParams));
-	progPipeline[glabs::ShaderStage::Vertex].Set(vertexShader);
+	progPipeline.SetProgram(vertexShader);
 	progPipeline.BindToPipeline();
 
 	progPipeline[glabs::ShaderStage::Vertex].Get().SetUniform("inX", 56.0f);
