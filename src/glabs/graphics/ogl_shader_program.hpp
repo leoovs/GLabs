@@ -80,6 +80,8 @@ namespace glabs
 		void CreateNativeShaderProgram();
 		void DestroyNativeShaderProgram();
 
+		void DisplayBuildingStatus();
+
 		Params mParams;
 		GLuint mNativeShaderProgram;
 		OglUniformLocationCache mUniformLocationCache;

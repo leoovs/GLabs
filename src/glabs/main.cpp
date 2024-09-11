@@ -79,6 +79,8 @@ int main()
 	vertexShaderParams.Stage = glabs::ShaderStage::Vertex;
 	vertexShaderParams.Source =
 R"(
+#version 460 core
+
 uniform float inX;
 
 out gl_PerVertex
@@ -93,7 +95,6 @@ void main()
 )";
 
 	glabs::OglShaderProgram vertexShader(std::move(vertexShaderParams));
-	vertexShader.SetUniform("inX", 1.0f);
 
 	glabs::OglProgramPipeline::Params progPipelineParams;
 	progPipelineParams.DebugName = "My program pipeline";
@@ -101,6 +102,8 @@ void main()
 	glabs::OglProgramPipeline progPipeline(std::move(progPipelineParams));
 	progPipeline[glabs::ShaderStage::Vertex].Set(vertexShader);
 	progPipeline.BindToPipeline();
+
+	progPipeline[glabs::ShaderStage::Vertex].Get().SetUniform("inX", 56.0f);
 
 	while (running)
 	{

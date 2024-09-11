@@ -102,11 +102,32 @@ namespace glabs
 		);
 
 		mUniformLocationCache.SetNativeShaderProgram(mNativeShaderProgram);
+
+		DisplayBuildingStatus();
 	}
 
 	void OglShaderProgram::DestroyNativeShaderProgram()
 	{
 		glDeleteProgram(std::exchange(mNativeShaderProgram, 0));
+	}
+
+	void OglShaderProgram::DisplayBuildingStatus()
+	{
+		GLint isLinked = GL_FALSE;
+		glGetProgramiv(mNativeShaderProgram, GL_LINK_STATUS, &isLinked);
+
+		if (isLinked)
+		{
+			return;
+		}
+
+		GLint logLength = 0;
+		glGetProgramiv(mNativeShaderProgram, GL_INFO_LOG_LENGTH, &logLength);
+
+		std::vector<char> logBuffer(logLength, '\0');
+		glGetProgramInfoLog(mNativeShaderProgram, logBuffer.size(), nullptr, logBuffer.data());
+
+		std::cerr << logBuffer.data() << '\n';
 	}
 }
 
