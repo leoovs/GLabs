@@ -18,6 +18,9 @@ namespace glabs
 			GLuint nativeProgramPipeline
 		);
 
+		bool IsSet() const;
+		OglShaderProgram& Get();
+
 		void Set(OglShaderProgram& program);
 		void Unset();
 

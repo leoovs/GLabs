@@ -20,6 +20,19 @@ namespace glabs
 		, mNativeProgramPipeline(nativeProgramPipeline)
 	{}
 
+	bool OglShaderProgramSetter::IsSet() const
+	{
+		OglShaderProgram* program = mUsage->Programs.at(size_t(mSettingStage));
+		return nullptr != program;
+	}
+
+	OglShaderProgram& OglShaderProgramSetter::Get()
+	{
+		assert(IsSet());
+
+		return *mUsage->Programs.at(size_t(mSettingStage));
+	}
+
 	void OglShaderProgramSetter::Set(OglShaderProgram& program)
 	{
 		ShaderStage stage = program.GetParams().Stage;
