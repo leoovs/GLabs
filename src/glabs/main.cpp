@@ -4,16 +4,22 @@
 #include <GLFW/glfw3.h>
 
 #include "glabs/graphics/ogl_buffer.hpp"
+#include "glabs/graphics/ogl_debug_output.hpp"
 #include "glabs/graphics/ogl_geometry_input.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include "glabs/graphics/window.hpp"
 
 struct GlfwLife
 {
-	GlfwLife()
+	GlfwLife(bool debugContext = false)
 	{
 		int result = glfwInit();
 		assert(GLFW_TRUE == result);
+
+		if (debugContext)
+		{
+			glfwWindowHint(GLFW_CONTEXT_DEBUG, GLFW_TRUE);
+		}
 	}
 
 	~GlfwLife()
@@ -28,6 +34,9 @@ int main()
 
 	bool running = true;
 	glabs::Window wnd(1280, 720, "Hello world");
+
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(glabs::OglDebugMessageCallback, nullptr);
 
 	wnd.SetCloseCallback([&running](){ running = false; });
 	wnd.SetSizeCallback([](int32_t width, int32_t height)
