@@ -9,7 +9,8 @@ namespace glabs
 	}
 
 	OglBuffer::OglBuffer(OglBuffer&& other) noexcept
-		: mNativeBuffer(std::exchange(other.mNativeBuffer, 0))
+		: mParams(std::move(other.mParams))
+		, mNativeBuffer(std::exchange(other.mNativeBuffer, 0))
 	{}
 
 	OglBuffer& OglBuffer::operator=(OglBuffer&& other) noexcept
@@ -20,6 +21,7 @@ namespace glabs
 		}
 
 		DestroyNativeBuffer();
+		mParams = std::move(other.mParams);
 		mNativeBuffer = std::exchange(other.mNativeBuffer, 0);
 
 		return *this;
