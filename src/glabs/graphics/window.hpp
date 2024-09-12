@@ -10,6 +10,7 @@ namespace glabs
 		using CloseCallback = void();
 		using SizeCallback = void(int32_t, int32_t);
 
+		Window() = default;
 		Window(int32_t width, int32_t height, std::string_view title);
 
 		Window(Window&& other) noexcept;

@@ -16,6 +16,7 @@ namespace glabs
 			size_t ElementCount = 0;
 		};
 
+		OglBuffer() = default;
 		OglBuffer(const Params& params);
 
 		OglBuffer(OglBuffer&& other) noexcept;
@@ -28,7 +29,7 @@ namespace glabs
 		size_t GetSize() const;
 		GLuint GetNativeBuffer() const;
 
-		void SetData(void* data);
+		void SetData(const void* data);
 
 		void BindToPipeline();
 
