@@ -66,6 +66,7 @@ namespace glabs
 			std::vector<VertexParams> Vertices;
 		};
 
+		OglGeometryInput() = default;
 		OglGeometryInput(Params params);
 
 		OglGeometryInput(OglGeometryInput&& other) noexcept;
