@@ -12,7 +12,8 @@ namespace glabs
 	}
 
 	OglGeometryInput::OglGeometryInput(OglGeometryInput&& other) noexcept
-		: mNativeVertexArray(std::exchange(other.mNativeVertexArray, 0))
+		: mParams(std::move(other.mParams))
+		, mNativeVertexArray(std::exchange(other.mNativeVertexArray, 0))
 	{}
 
 	OglGeometryInput& OglGeometryInput::operator=(OglGeometryInput&& other) noexcept
@@ -23,6 +24,7 @@ namespace glabs
 		}
 
 		DestroyNativeVertexArray();
+		mParams = std::move(other.mParams);
 		mNativeVertexArray = std::exchange(other.mNativeVertexArray, 0);
 
 		return *this;
