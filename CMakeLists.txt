@@ -54,3 +54,9 @@ set_target_properties(
 	CXX_STANDARD_REQUIRED TRUE
 )
 
+add_custom_command(
+	TARGET glabs
+	POST_BUILD COMMAND
+	${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/glsl" $<TARGET_FILE_DIR:glabs>/glsl
+)
+

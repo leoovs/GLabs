@@ -1,10 +1,10 @@
 #pragma once
 
-#include "glabs/graphics/window.hpp"
 #include "glabs/graphics/ogl_buffer.hpp"
 #include "glabs/graphics/ogl_geometry_input.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
-#include "glabs/graphics/ogl_shader_program.hpp"
+#include "glabs/graphics/window.hpp"
+#include "glabs/rendering/shader_library.hpp"
 
 namespace glabs
 {
@@ -30,8 +30,7 @@ namespace glabs
 		OglBuffer mIndexBuffer;
 		OglGeometryInput mTriangleInput;
 		OglProgramPipeline mShaders;
-		OglShaderProgram mVertexShader;
-		OglShaderProgram mPixelShader;
+		ShaderLibrary mShaderLib;
 
 		float mTriangleVertices[9]
 		{

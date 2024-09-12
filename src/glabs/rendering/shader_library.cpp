@@ -21,6 +21,8 @@ namespace glabs
 		std::string lineBuffer;
 
 		std::ifstream shaderSourceFile(filename.data());
+		assert(shaderSourceFile.is_open() && "Could not open shader source file");
+
 		while (std::getline(shaderSourceFile, lineBuffer))
 		{
 			shaderSource += lineBuffer + '\n';

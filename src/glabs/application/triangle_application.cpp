@@ -38,7 +38,7 @@ namespace glabs
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		mPixelShader.SetUniform("tone", mTriangleTone[0], mTriangleTone[1], mTriangleTone[2]);
+		mShaders[ShaderStage::Fragment].Get().SetUniform("tone", mTriangleTone[0], mTriangleTone[1], mTriangleTone[2]);
 
 		mShaders.BindToPipeline();
 		mTriangleInput.BindToPipeline();
@@ -90,86 +90,19 @@ namespace glabs
 
 		mTriangleInput = OglGeometryInput(std::move(triangleGeometryInputParams));
 
-		OglShaderProgram::Params vertexShaderParams;
-		vertexShaderParams.DebugName = "Traingle vertex shader";
-		vertexShaderParams.Stage = ShaderStage::Vertex;
-		vertexShaderParams.Source =
-R"(\
-#version 460 core
-
-layout(location = 0) in vec3 inPosition;
-layout(location = 1) in vec3 inColor;
-
-out gl_PerVertex
-{
-	vec4 gl_Position;
-};
-
-out vec3 color;
-out vec3 position;
-
-void main()
-{
-	position = inPosition;
-	gl_Position = vec4(inPosition, 1.0f);
-	color = inColor;
-}
-)";
-
-		mVertexShader = OglShaderProgram(std::move(vertexShaderParams));
-
-		OglShaderProgram::Params pixelShaderParams;
-		pixelShaderParams.DebugName = "Traingle fragment shader";
-		pixelShaderParams.Stage = ShaderStage::Fragment;
-		pixelShaderParams.Source =
-R"(\
-#version 460 core
-
-uniform vec3 tone;
-
-in vec3 color;
-in vec3 position;
-out vec4 outColor;
-
-float noise(vec2 co)
-{
-	return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
-}
-
-void main()
-{
-	vec3 clampedColor = color;
-
-	if (clampedColor.r >= 0.5f)
-	{
-		clampedColor = vec3(1.0f, 0.0f, 0.0f);
-	}
-	else if (clampedColor.g >= 0.5f)
-	{
-		clampedColor = vec3(0.0f, 1.0f, 0.0f);
-	}
-	else if (clampedColor.b >= 0.5f)
-	{
-		clampedColor = vec3(0.0f, 0.0f, 1.0f);
-	}
-	else
-	{
-		float noiseResult = noise(position.xy);
-		clampedColor = vec3(noiseResult, noiseResult, noiseResult) * tone;
-	}
-
-	outColor = vec4(clampedColor, 1.0f);
-}
-)";
-
-		mPixelShader = OglShaderProgram(std::move(pixelShaderParams));
-
 		OglProgramPipeline::Params shadersParams;
 		shadersParams.DebugName = "Triangle shader pipeline";
 
 		mShaders = OglProgramPipeline(std::move(shadersParams));
-		mShaders[ShaderStage::Vertex].Set(mVertexShader);
-		mShaders[ShaderStage::Fragment].Set(mPixelShader);
+
+		mShaders[ShaderStage::Vertex].Set(
+			mShaderLib[ShaderStage::Vertex]
+				.FetchFromFile("glsl/triangle_vertex.glsl", "triangle-vertex")
+		);
+		mShaders[ShaderStage::Fragment].Set(
+			mShaderLib[ShaderStage::Fragment]
+				.FetchFromFile("glsl/triangle_fragment.glsl", "triangle-fragment")
+		);
 	}
 }
 
