@@ -37,10 +37,7 @@ namespace glabs
 
 	void OglGeometryInput::BindToPipeline()
 	{
-		if (0 != mNativeVertexArray)
-		{
-			glBindVertexArray(mNativeVertexArray);
-		}
+		glBindVertexArray(mNativeVertexArray);
 	}
 
 	void OglGeometryInput::CreateNativeVertexArray()

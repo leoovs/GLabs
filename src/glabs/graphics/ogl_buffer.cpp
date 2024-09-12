@@ -49,15 +49,12 @@ namespace glabs
 
 	void OglBuffer::SetData(const void* data)
 	{
-		if (0 != mNativeBuffer)
-		{
-			glNamedBufferSubData(
-				mNativeBuffer,
-				0,
-				GLsizeiptr(GetSize()),
-				data
-			);
-		}
+		glNamedBufferSubData(
+			mNativeBuffer,
+			0,
+			GLsizeiptr(GetSize()),
+			data
+		);
 	}
 
 	void OglBuffer::CreateNativeBuffer()
@@ -80,10 +77,7 @@ namespace glabs
 
 	void OglBuffer::BindToPipeline()
 	{
-		if (0 != mNativeBuffer)
-		{
-			glBindBuffer(mParams.Target, mNativeBuffer);
-		}
+		glBindBuffer(mParams.Target, mNativeBuffer);
 	}
 
 	void OglBuffer::DestroyNativeBuffer()
