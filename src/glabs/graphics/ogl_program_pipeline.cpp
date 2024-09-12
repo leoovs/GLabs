@@ -70,6 +70,7 @@ namespace glabs
 	OglProgramPipeline::OglProgramPipeline(OglProgramPipeline&& other) noexcept
 		: mParams(std::move(other.mParams))
 		, mNativeProgramPipeline(std::exchange(other.mNativeProgramPipeline, 0))
+		, mUsage(std::move(other.mUsage))
 	{}
 
 	OglProgramPipeline& OglProgramPipeline::operator=(OglProgramPipeline&& other) noexcept
@@ -82,6 +83,7 @@ namespace glabs
 		DestroyNativeProgramPipeline();
 		mParams = std::move(other.mParams);
 		mNativeProgramPipeline = std::exchange(other.mNativeProgramPipeline, 0);
+		mUsage = std::move(other.mUsage);
 
 		return *this;
 	}

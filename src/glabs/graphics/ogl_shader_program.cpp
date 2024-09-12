@@ -46,6 +46,7 @@ namespace glabs
 	OglShaderProgram::OglShaderProgram(OglShaderProgram&& other) noexcept
 		: mParams(std::move(other.mParams))
 		, mNativeShaderProgram(std::exchange(other.mNativeShaderProgram, 0))
+		, mUniformLocationCache(std::move(other.mUniformLocationCache))
 	{}
 
 	OglShaderProgram& OglShaderProgram::operator=(OglShaderProgram&& other) noexcept
@@ -55,8 +56,10 @@ namespace glabs
 			return *this;
 		}
 
+		DestroyNativeShaderProgram();
 		mParams = std::move(other.mParams);
 		mNativeShaderProgram = std::exchange(other.mNativeShaderProgram, 0);
+		mUniformLocationCache = std::move(other.mUniformLocationCache);
 
 		return *this;
 	}
