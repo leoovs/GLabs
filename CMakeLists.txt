@@ -23,6 +23,7 @@ target_sources(
 	"src/glabs/graphics/ogl_program_pipeline.cpp"
 	"src/glabs/graphics/ogl_shader_program.cpp"
 	"src/glabs/graphics/window.cpp"
+	"src/glabs/rendering/shader_library.cpp"
 
 	"src/glabs/main.cpp"
 )
