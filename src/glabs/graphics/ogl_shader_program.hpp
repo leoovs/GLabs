@@ -63,6 +63,7 @@ namespace glabs
 			std::string Source;
 		};
 
+		OglShaderProgram() = default;
 		OglShaderProgram(Params params);
 
 		OglShaderProgram(OglShaderProgram&& other) noexcept;

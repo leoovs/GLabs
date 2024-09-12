@@ -134,7 +134,10 @@ namespace glabs
 
 	void OglShaderProgram::DestroyNativeShaderProgram()
 	{
-		glDeleteProgram(std::exchange(mNativeShaderProgram, 0));
+		if (0 != mNativeShaderProgram)
+		{
+			glDeleteProgram(std::exchange(mNativeShaderProgram, 0));
+		}
 	}
 
 	void OglShaderProgram::DisplayBuildingStatus()

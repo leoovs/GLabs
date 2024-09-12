@@ -38,6 +38,7 @@ namespace glabs
 			std::string DebugName = "Unnamed OglProgramPipeline";
 		};
 
+		OglProgramPipeline() = default;
 		OglProgramPipeline(Params params);
 
 		OglProgramPipeline(OglProgramPipeline&& other) noexcept;

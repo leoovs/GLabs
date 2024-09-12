@@ -124,8 +124,11 @@ namespace glabs
 
 	void OglProgramPipeline::DestroyNativeProgramPipeline()
 	{
-		glDeleteProgramPipelines(1, &mNativeProgramPipeline);
-		mNativeProgramPipeline = 0;
+		if (0 != mNativeProgramPipeline)
+		{
+			glDeleteProgramPipelines(1, &mNativeProgramPipeline);
+			mNativeProgramPipeline = 0;
+		}
 	}
 }
 
