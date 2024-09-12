@@ -23,15 +23,15 @@ namespace glabs
 
 		bool mRunning = false;
 
-		glabs::Window mAppWindow{ 1280, 720, "Traingle application" };
+		Window mAppWindow{ 1280, 720, "Traingle application" };
 
-		std::unique_ptr<glabs::OglBuffer> mVerticesBuffer;
-		std::unique_ptr<glabs::OglBuffer> mColorBuffer;
-		std::unique_ptr<glabs::OglBuffer> mIndexBuffer;
-		std::unique_ptr<glabs::OglGeometryInput> mTriangleInput;
-		std::unique_ptr<glabs::OglProgramPipeline> mShaders;
-		std::unique_ptr<glabs::OglShaderProgram> mVertexShader;
-		std::unique_ptr<glabs::OglShaderProgram> mPixelShader;
+		OglBuffer mVerticesBuffer;
+		OglBuffer mColorBuffer;
+		OglBuffer mIndexBuffer;
+		OglGeometryInput mTriangleInput;
+		OglProgramPipeline mShaders;
+		OglShaderProgram mVertexShader;
+		OglShaderProgram mPixelShader;
 
 		float mTriangleVertices[9]
 		{

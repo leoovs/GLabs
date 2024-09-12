@@ -13,7 +13,7 @@ namespace glabs
 		mAppWindow.SetCloseCallback([this](){ mRunning = false; });
 
 		glEnable(GL_DEBUG_OUTPUT);
-		glDebugMessageCallback(glabs::OglDebugMessageCallback, nullptr);
+		glDebugMessageCallback(OglDebugMessageCallback, nullptr);
 
 		SetupResources();
 	}
@@ -38,10 +38,10 @@ namespace glabs
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		mPixelShader->SetUniform("tone", mTriangleTone[0], mTriangleTone[1], mTriangleTone[2]);
+		mPixelShader.SetUniform("tone", mTriangleTone[0], mTriangleTone[1], mTriangleTone[2]);
 
-		mShaders->BindToPipeline();
-		mTriangleInput->BindToPipeline();
+		mShaders.BindToPipeline();
+		mTriangleInput.BindToPipeline();
 
 		glViewport(0, 0, mAppWindow.GetWidth(), mAppWindow.GetHeight());
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
@@ -51,46 +51,46 @@ namespace glabs
 
 	void TriangleApplication::SetupResources()
 	{
-		glabs::OglBuffer::Params verticesBufferParams;
+		OglBuffer::Params verticesBufferParams;
 		verticesBufferParams.DebugName = "Triangle vertices buffer";
 		verticesBufferParams.Target = GL_ARRAY_BUFFER;
 		verticesBufferParams.ElementSize = sizeof(float[3]);
 		verticesBufferParams.ElementCount = 3;
 
-		mVerticesBuffer = std::make_unique<glabs::OglBuffer>(std::move(verticesBufferParams));
-		mVerticesBuffer->SetData(mTriangleVertices);
+		mVerticesBuffer = OglBuffer(std::move(verticesBufferParams));
+		mVerticesBuffer.SetData(mTriangleVertices);
 
-		glabs::OglBuffer::Params colorBufferParams;
+		OglBuffer::Params colorBufferParams;
 		colorBufferParams.DebugName = "Triangle color buffer";
 		colorBufferParams.Target = GL_ARRAY_BUFFER;
 		colorBufferParams.ElementSize = sizeof(float[3]);
 		colorBufferParams.ElementCount = 3;
 
-		mColorBuffer = std::make_unique<glabs::OglBuffer>(std::move(colorBufferParams));
-		mColorBuffer->SetData(mTriangleVertexColors);
+		mColorBuffer = OglBuffer(std::move(colorBufferParams));
+		mColorBuffer.SetData(mTriangleVertexColors);
 
-		glabs::OglBuffer::Params indexBufferParams;
+		OglBuffer::Params indexBufferParams;
 		indexBufferParams.DebugName = "Triangle indices";
 		indexBufferParams.Target = GL_ELEMENT_ARRAY_BUFFER;
 		indexBufferParams.ElementSize = sizeof(uint32_t);
 		indexBufferParams.ElementCount = 3;
 
-		mIndexBuffer = std::make_unique<glabs::OglBuffer>(std::move(indexBufferParams));
-		mIndexBuffer->SetData(mTriangleIndices);
+		mIndexBuffer = OglBuffer(std::move(indexBufferParams));
+		mIndexBuffer.SetData(mTriangleIndices);
 
-		glabs::OglGeometryInput::Params triangleGeometryInputParams;
+		OglGeometryInput::Params triangleGeometryInputParams;
 		triangleGeometryInputParams.DebugName = "Triangle geometry input";
 		triangleGeometryInputParams.Vertices = {
-			glabs::VertexParams{ 0, glabs::VertexFormat::Float3 }, //< Vertex positions.
-			glabs::VertexParams{ 1, glabs::VertexFormat::Float3 }, //< Vertex colors.
+			VertexParams{ 0, VertexFormat::Float3 }, //< Vertex positions.
+			VertexParams{ 1, VertexFormat::Float3 }, //< Vertex colors.
 		};
-		triangleGeometryInputParams.IndexBuffer = mIndexBuffer.get();
-		triangleGeometryInputParams.VertexBuffers[0] = mVerticesBuffer.get();
-		triangleGeometryInputParams.VertexBuffers[1] = mColorBuffer.get();
+		triangleGeometryInputParams.IndexBuffer = &mIndexBuffer;
+		triangleGeometryInputParams.VertexBuffers[0] = &mVerticesBuffer;
+		triangleGeometryInputParams.VertexBuffers[1] = &mColorBuffer;
 
-		mTriangleInput = std::make_unique<OglGeometryInput>(std::move(triangleGeometryInputParams));
+		mTriangleInput = OglGeometryInput(std::move(triangleGeometryInputParams));
 
-		glabs::OglShaderProgram::Params vertexShaderParams;
+		OglShaderProgram::Params vertexShaderParams;
 		vertexShaderParams.DebugName = "Traingle vertex shader";
 		vertexShaderParams.Stage = ShaderStage::Vertex;
 		vertexShaderParams.Source =
@@ -116,9 +116,9 @@ void main()
 }
 )";
 
-		mVertexShader = std::make_unique<OglShaderProgram>(std::move(vertexShaderParams));
+		mVertexShader = OglShaderProgram(std::move(vertexShaderParams));
 
-		glabs::OglShaderProgram::Params pixelShaderParams;
+		OglShaderProgram::Params pixelShaderParams;
 		pixelShaderParams.DebugName = "Traingle fragment shader";
 		pixelShaderParams.Stage = ShaderStage::Fragment;
 		pixelShaderParams.Source =
@@ -162,14 +162,14 @@ void main()
 }
 )";
 
-		mPixelShader = std::make_unique<OglShaderProgram>(std::move(pixelShaderParams));
+		mPixelShader = OglShaderProgram(std::move(pixelShaderParams));
 
-		glabs::OglProgramPipeline::Params shadersParams;
+		OglProgramPipeline::Params shadersParams;
 		shadersParams.DebugName = "Triangle shader pipeline";
 
-		mShaders = std::make_unique<OglProgramPipeline>(std::move(shadersParams));
-		mShaders->SetProgram(*mVertexShader);
-		mShaders->SetProgram(*mPixelShader);
+		mShaders = OglProgramPipeline(std::move(shadersParams));
+		mShaders[ShaderStage::Vertex].Set(mVertexShader);
+		mShaders[ShaderStage::Fragment].Set(mPixelShader);
 	}
 }
 
