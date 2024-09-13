@@ -15,7 +15,8 @@ add_executable(glabs)
 target_sources(
 	glabs
 	PRIVATE
-	"src/glabs/application/triangle_application.cpp"
+	"src/glabs/application/lab1_application.cpp"
+
 	"src/glabs/graphics/glfw_life.cpp"
 	"src/glabs/graphics/ogl_buffer.cpp"
 	"src/glabs/graphics/ogl_buffers.cpp"
@@ -23,6 +24,7 @@ target_sources(
 	"src/glabs/graphics/ogl_program_pipeline.cpp"
 	"src/glabs/graphics/ogl_shader_program.cpp"
 	"src/glabs/graphics/window.cpp"
+
 	"src/glabs/rendering/shader_library.cpp"
 
 	"src/glabs/main.cpp"
@@ -54,9 +56,10 @@ set_target_properties(
 	CXX_STANDARD_REQUIRED TRUE
 )
 
-add_custom_command(
-	TARGET glabs
-	POST_BUILD COMMAND
-	${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/glsl" $<TARGET_FILE_DIR:glabs>/glsl
+file(
+	COPY
+	"${PROJECT_SOURCE_DIR}/glsl"
+	DESTINATION
+	"${PROJECT_BINARY_DIR}"
 )
 
