@@ -10,6 +10,7 @@ namespace glabs
 	{
 		std::cerr << glGetString(GL_VERSION) << '\n';
 
+		mAppWindow = Window(1280, 720, "Hello triangle");
 		mAppWindow.SetCloseCallback([this](){ mRunning = false; });
 
 		glEnable(GL_DEBUG_OUTPUT);

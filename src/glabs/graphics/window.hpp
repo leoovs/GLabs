@@ -37,6 +37,7 @@ namespace glabs
 
 		void InitializeOglContext();
 		void InitializeCallbacks();
+		void RestoreThisInNativeWindow();
 
 		GLFWwindow* mNativeWindow = nullptr;
 

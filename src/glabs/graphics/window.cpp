@@ -14,7 +14,9 @@ namespace glabs
 		: mNativeWindow(std::exchange(other.mNativeWindow, nullptr))
 		, mCloseCallback(std::move(other.mCloseCallback))
 		, mSizeCallback(std::move(other.mSizeCallback))
-	{}
+	{
+		RestoreThisInNativeWindow();
+	}
 
 	Window& Window::operator=(Window&& other) noexcept
 	{
@@ -27,6 +29,7 @@ namespace glabs
 		mNativeWindow = std::exchange(other.mNativeWindow, nullptr);
 		mCloseCallback = std::move(other.mCloseCallback);
 		mSizeCallback = std::move(other.mSizeCallback);
+		RestoreThisInNativeWindow();
 
 		return *this;
 	}
@@ -146,6 +149,11 @@ namespace glabs
 				}
 			}
 		);
+	}
+
+	void Window::RestoreThisInNativeWindow()
+	{
+		BindThisToNativeWindow(this, mNativeWindow);
 	}
 }
 

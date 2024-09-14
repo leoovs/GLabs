@@ -23,7 +23,7 @@ namespace glabs
 
 		bool mRunning = false;
 
-		Window mAppWindow{ 1280, 720, "Traingle application" };
+		Window mAppWindow;
 
 		OglBuffer mVerticesBuffer;
 		OglBuffer mColorBuffer;
