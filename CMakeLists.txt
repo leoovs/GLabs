@@ -8,6 +8,7 @@ include(CPM)
 
 add_subdirectory("external/glew")
 add_subdirectory("external/imgui")
+add_subdirectory("external/stb")
 
 CPMAddPackage("gh:glfw/glfw#3.4")
 
@@ -19,6 +20,7 @@ target_sources(
 	"src/glabs/application/triangle_application.cpp"
 
 	"src/glabs/graphics/glfw_life.cpp"
+	"src/glabs/graphics/image2d.cpp"
 	"src/glabs/graphics/ogl_buffer.cpp"
 	"src/glabs/graphics/ogl_buffers.cpp"
 	"src/glabs/graphics/ogl_geometry_input.cpp"
@@ -50,6 +52,7 @@ target_link_libraries(
 	glfw
 	glew
 	imgui
+	stb
 )
 
 set_target_properties(
