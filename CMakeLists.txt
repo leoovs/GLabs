@@ -26,6 +26,7 @@ target_sources(
 	"src/glabs/graphics/ogl_geometry_input.cpp"
 	"src/glabs/graphics/ogl_program_pipeline.cpp"
 	"src/glabs/graphics/ogl_shader_program.cpp"
+	"src/glabs/graphics/ogl_texture2d.cpp"
 	"src/glabs/graphics/window.cpp"
 
 	"src/glabs/rendering/dear_imgui.cpp"
