@@ -1,4 +1,4 @@
-#include "glabs/application/triangle_application.hpp"
+#include "glabs/application/texture_application.hpp"
 #include "glabs/graphics/glfw_life.hpp"
 
 int main()
@@ -11,7 +11,7 @@ int main()
 
 	glabs::GlfwLife glfw(std::move(glfwParams));
 	{
-		glabs::TriangleApplication().Run();
+		glabs::TextureApplication().Run();
 	};
 }
 

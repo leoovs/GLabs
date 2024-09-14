@@ -61,6 +61,11 @@ namespace glabs
 			GraphicsFormat Format = GraphicsFormat::R8G8B8_UNORM;
 		};
 
+		static constexpr int32_t CalculateMipLevels(int32_t width, int32_t height)
+		{
+			return std::log2(std::max(width, height)) + 1;
+		}
+
 		OglTexture2D() = default;
 		OglTexture2D(Params params);
 
@@ -75,6 +80,7 @@ namespace glabs
 
 		void SetData(const void* data);
 
+		void GenerateMipMaps();
 		void BindToPipeline(int32_t unit);
 
 	private:

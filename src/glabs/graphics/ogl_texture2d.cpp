@@ -57,6 +57,11 @@ namespace glabs
 		);
 	}
 
+	void OglTexture2D::GenerateMipMaps()
+	{
+		glGenerateTextureMipmap(mNativeTexture2D);
+	}
+
 	void OglTexture2D::BindToPipeline(int32_t unit)
 	{
 		glBindTextureUnit(GLuint(unit), mNativeTexture2D);
@@ -65,6 +70,12 @@ namespace glabs
 	void OglTexture2D::CreateNativeTexture2D()
 	{
 		glCreateTextures(GL_TEXTURE_2D, 1, &mNativeTexture2D);
+		glObjectLabel(
+			GL_TEXTURE,
+			mNativeTexture2D,
+			GLsizei(mParams.DebugName.length()),
+			mParams.DebugName.data()
+		);
 		glTextureStorage2D(
 			mNativeTexture2D,
 			GLsizei(mParams.MipLevels),
