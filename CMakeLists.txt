@@ -7,6 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CPM)
 
 add_subdirectory("external/glew")
+add_subdirectory("external/imgui")
 
 CPMAddPackage("gh:glfw/glfw#3.4")
 
@@ -16,6 +17,7 @@ target_sources(
 	glabs
 	PRIVATE
 	"src/glabs/application/triangle_application.cpp"
+
 	"src/glabs/graphics/glfw_life.cpp"
 	"src/glabs/graphics/ogl_buffer.cpp"
 	"src/glabs/graphics/ogl_buffers.cpp"
@@ -23,6 +25,8 @@ target_sources(
 	"src/glabs/graphics/ogl_program_pipeline.cpp"
 	"src/glabs/graphics/ogl_shader_program.cpp"
 	"src/glabs/graphics/window.cpp"
+
+	"src/glabs/rendering/dear_imgui.cpp"
 	"src/glabs/rendering/shader_library.cpp"
 
 	"src/glabs/main.cpp"
@@ -45,6 +49,7 @@ target_link_libraries(
 	PRIVATE
 	glfw
 	glew
+	imgui
 )
 
 set_target_properties(

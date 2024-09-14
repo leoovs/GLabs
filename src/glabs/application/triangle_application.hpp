@@ -4,6 +4,7 @@
 #include "glabs/graphics/ogl_geometry_input.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include "glabs/graphics/window.hpp"
+#include "glabs/rendering/dear_imgui.hpp"
 #include "glabs/rendering/shader_library.hpp"
 
 namespace glabs
@@ -31,6 +32,7 @@ namespace glabs
 		OglGeometryInput mTriangleInput;
 		OglProgramPipeline mShaders;
 		ShaderLibrary mShaderLib;
+		DearImGui mImGui;
 
 		float mTriangleVertices[9]
 		{

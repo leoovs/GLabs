@@ -21,6 +21,7 @@ namespace glabs
 
 		int32_t GetWidth() const;
 		int32_t GetHeight() const;
+		GLFWwindow* GetNativeWindow() const;
 
 		void SetCloseCallback(std::function<CloseCallback> callback);
 		void SetSizeCallback(std::function<SizeCallback> callback);

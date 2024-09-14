@@ -16,6 +16,10 @@ namespace glabs
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(OglDebugMessageCallback, nullptr);
 
+		DearImGui::Params imguiParams;
+		imguiParams.OutputWindow = &mAppWindow;
+		mImGui = DearImGui(std::move(imguiParams));
+
 		SetupResources();
 	}
 
@@ -32,7 +36,11 @@ namespace glabs
 
 	void TriangleApplication::Update()
 	{
+		mImGui.NewFrame();
 		mAppWindow.PollEvents();
+
+		ImGui::ShowDemoWindow();
+		ImGui::Render();
 	}
 
 	void TriangleApplication::Render()
@@ -46,6 +54,8 @@ namespace glabs
 
 		glViewport(0, 0, mAppWindow.GetWidth(), mAppWindow.GetHeight());
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+
+		mImGui.RenderDrawData(ImGui::GetDrawData());
 
 		mAppWindow.Present();
 	}

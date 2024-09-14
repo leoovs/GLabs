@@ -57,6 +57,11 @@ namespace glabs
 		return static_cast<int32_t>(height);
 	}
 
+	GLFWwindow* Window::GetNativeWindow() const
+	{
+		return mNativeWindow;
+	}
+
 	void Window::SetCloseCallback(std::function<CloseCallback> callback)
 	{
 		mCloseCallback = std::move(callback);
