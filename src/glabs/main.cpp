@@ -1,3 +1,4 @@
+#include "glabs/application/lab2_application.hpp"
 #include "glabs/graphics/glfw_life.hpp"
 
 int main()
@@ -10,6 +11,7 @@ int main()
 
 	glabs::GlfwLife glfw(std::move(glfwParams));
 	{
+		glabs::Lab2Application().Run();
 	};
 }
 
