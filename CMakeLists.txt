@@ -17,9 +17,6 @@ add_executable(glabs)
 target_sources(
 	glabs
 	PRIVATE
-	"src/glabs/application/texture_application.cpp"
-	"src/glabs/application/triangle_application.cpp"
-
 	"src/glabs/graphics/glfw_life.cpp"
 	"src/glabs/graphics/image2d.cpp"
 	"src/glabs/graphics/ogl_buffer.cpp"
