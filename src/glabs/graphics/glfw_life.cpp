@@ -20,15 +20,22 @@ namespace glabs
 		int result = glfwInit();
 		assert(GLFW_TRUE == result);
 
-		glfwWindowHint(GLFW_CONTEXT_DEBUG, mParams.EnableDebugContext ? GLFW_TRUE : GLFW_FALSE);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, mParams.OglVersionMajor);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, mParams.OglVersionMinor);
-		glfwWindowHint(
-			GLFW_OPENGL_PROFILE,
-			mParams.CoreProfile
-				? GLFW_OPENGL_CORE_PROFILE
-				: GLFW_OPENGL_COMPAT_PROFILE
-		);
+		if (mParams.EnableDebugContext)
+		{
+			glfwWindowHint(GLFW_CONTEXT_DEBUG, GLFW_TRUE);
+		}
+		if (mParams.OglVersionMajor)
+		{
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, mParams.OglVersionMajor);
+		}
+		if (mParams.OglVersionMinor)
+		{
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, mParams.OglVersionMinor);
+		}
+		if (mParams.CoreProfile)
+		{
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		}
 	}
 
 	void GlfwLife::TerminateGlfw()

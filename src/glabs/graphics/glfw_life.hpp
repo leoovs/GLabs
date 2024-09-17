@@ -8,8 +8,8 @@ namespace glabs
 		struct Params
 		{
 			bool EnableDebugContext = true;
-			int OglVersionMajor = 4;
-			int OglVersionMinor = 6;
+			int OglVersionMajor = 0;
+			int OglVersionMinor = 0;
 			bool CoreProfile = true;
 		};
 

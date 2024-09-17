@@ -12,6 +12,7 @@
 #include <utility>
 
 #include <array>
+#include <queue>
 #include <string>
 #include <string_view>
 

@@ -4,14 +4,14 @@
 int main()
 {
 	glabs::GlfwLife::Params glfwParams;
-	glfwParams.CoreProfile = true;
-	glfwParams.OglVersionMajor = 4;
-	glfwParams.OglVersionMinor = 6;
-	glfwParams.EnableDebugContext = true;
+	glfwParams.EnableDebugContext = false;
+	glfwParams.CoreProfile = false;
 
 	glabs::GlfwLife glfw(std::move(glfwParams));
 	{
-		glabs::Lab2Application().Run();
+		glabs::Lab2Application app;
+		app.PushTask(glabs::LabTaskKind::DrawNGon);
+		app.Run();
 	};
 }
 

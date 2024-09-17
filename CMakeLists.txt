@@ -18,6 +18,8 @@ target_sources(
 	glabs
 	PRIVATE
 	"src/glabs/application/lab2_application.cpp"
+	"src/glabs/application/lab_task_draw_ngon.cpp"
+	"src/glabs/application/shape_math.cpp"
 
 	"src/glabs/graphics/glfw_life.cpp"
 	"src/glabs/graphics/image2d.cpp"
