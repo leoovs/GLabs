@@ -18,6 +18,7 @@ target_sources(
 	glabs
 	PRIVATE
 	"src/glabs/application/lab2_application.cpp"
+	"src/glabs/application/lab_task_draw_first_shape.cpp"
 	"src/glabs/application/lab_task_draw_ngon.cpp"
 	"src/glabs/application/shape_math.cpp"
 

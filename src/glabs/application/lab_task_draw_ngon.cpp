@@ -14,6 +14,16 @@ namespace glabs
 		return LabTaskKind::DrawNGon;
 	}
 
+	LabTaskKind LabTask_DrawNGon::GetNext() const
+	{
+		return LabTaskKind::DrawFirstShape;
+	}
+
+	LabTaskKind LabTask_DrawNGon::GetPrev() const
+	{
+		return LabTaskKind::None;
+	}
+
 	void LabTask_DrawNGon::OnEnter()
 	{
 	}
@@ -57,6 +67,7 @@ namespace glabs
 
 		case DrawStrategy::Lines:
 			ImGui::SliderFloat("Толщина линии", &mLineWidth, 1.0f, 100.0f);
+			ImGui::Checkbox("Сглаживание линий", &mSmoothLine);
 			break;
 		}
 	}
@@ -92,7 +103,8 @@ namespace glabs
 		mShaders.BindToPipeline();
 		mNGonGeometry.BindToPipeline();
 		glLineWidth(mLineWidth);
-		glDrawArrays(GL_LINE_STRIP, 0, mNGon.size() + 1);
+		(mSmoothLine ? glEnable : glDisable)(GL_LINE_SMOOTH);
+		glDrawArrays(GL_LINE_LOOP, 0, mNGon.size());
 	}
 
 	void LabTask_DrawNGon::LoadShaders()
@@ -110,21 +122,13 @@ namespace glabs
 	{
 		mNGon = CalculateNGonCorners(mNGonSize, mNGonRadius, mNGonCenter);
 
-		switch (mDrawStrategy)
-		{
-		case DrawStrategy::Points:
-			LoadNGonAsPoints();
-			break;
-		case DrawStrategy::Lines:
-			LoadNGonAsLines();
-			break;
-		}
+		LoadNGon();
 	}
 
-	void LabTask_DrawNGon::LoadNGonAsPoints()
+	void LabTask_DrawNGon::LoadNGon()
 	{
 		mNGonPositions = OglBuffer(OglBuffer::Params{
-			"NGon point positions",
+			"NGon positions",
 			GL_ARRAY_BUFFER,
 			sizeof(Vector2f),
 			mNGon.size()
@@ -132,7 +136,7 @@ namespace glabs
 		mNGonPositions.SetData(mNGon.data());
 
 		OglGeometryInput::Params ngonAsPoints;
-		ngonAsPoints.DebugName = "NGon layout as points";
+		ngonAsPoints.DebugName = "NGon layout";
 		ngonAsPoints.VertexBuffers[0] = &mNGonPositions;
 		ngonAsPoints.IndexBuffer = nullptr;
 		ngonAsPoints.Vertices = {
@@ -140,30 +144,6 @@ namespace glabs
 		};
 
 		mNGonGeometry = OglGeometryInput(std::move(ngonAsPoints));
-	}
-
-	void LabTask_DrawNGon::LoadNGonAsLines()
-	{
-		std::vector<Vector2f> ngon = mNGon;
-		ngon.push_back(ngon.front());
-
-		mNGonPositions = OglBuffer(OglBuffer::Params{
-			"NGon lines junction positions",
-			GL_ARRAY_BUFFER,
-			sizeof(Vector2f),
-			ngon.size()
-		});
-		mNGonPositions.SetData(ngon.data());
-
-		OglGeometryInput::Params ngonAsLines;
-		ngonAsLines.DebugName = "NGon layout as lines";
-		ngonAsLines.VertexBuffers[0] = &mNGonPositions;
-		ngonAsLines.IndexBuffer = nullptr;
-		ngonAsLines.Vertices = {
-			VertexParams{ 0, VertexFormat::Float2 }
-		};
-
-		mNGonGeometry = OglGeometryInput(std::move(ngonAsLines));
 	}
 }
 

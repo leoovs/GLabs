@@ -4,7 +4,7 @@
 int main()
 {
 	glabs::GlfwLife::Params glfwParams;
-	glfwParams.EnableDebugContext = false;
+	glfwParams.EnableDebugContext = true;
 	glfwParams.CoreProfile = false;
 
 	glabs::GlfwLife glfw(std::move(glfwParams));

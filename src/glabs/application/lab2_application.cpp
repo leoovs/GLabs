@@ -1,5 +1,6 @@
 #include "glabs/application/lab2_application.hpp"
 #include "glabs/application/lab_task.hpp"
+#include "glabs/application/lab_task_draw_first_shape.hpp"
 #include "glabs/application/lab_task_draw_ngon.hpp"
 #include "glabs/graphics/ogl_debug_output.hpp"
 
@@ -50,7 +51,8 @@ namespace glabs
 	{
 		std::unique_ptr<LabTask> tasks[]
 		{
-			std::make_unique<LabTask_DrawNGon>(*this)
+			std::make_unique<LabTask_DrawNGon>(*this),
+			std::make_unique<LabTask_DrawFirstShape>(),
 		};
 
 		for (std::unique_ptr<LabTask>& task : tasks)
@@ -74,6 +76,27 @@ namespace glabs
 
 			ImGui::Begin("Главное меню");
 			ImGui::Text("Версия OpenGL: %s", glGetString(GL_VERSION));
+
+			ImGui::NewLine();
+			if (task->GetPrev() != LabTaskKind::None)
+			{
+				if (ImGui::Button("Пред."))
+				{
+					PushTask(task->GetPrev());
+				}
+				ImGui::SameLine();
+			}
+			ImGui::Text("%s", GetLabTaskKindUserFriendlyString(task->GetKind()));
+			if (task->GetNext() != LabTaskKind::None )
+			{
+				ImGui::SameLine();
+				if (ImGui::Button("След."))
+				{
+					PushTask(task->GetNext());
+				}
+			}
+			ImGui::Separator();
+
 			task->OnMainMenu();
 			ImGui::End();
 		}

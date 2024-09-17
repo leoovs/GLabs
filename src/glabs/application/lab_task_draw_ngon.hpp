@@ -4,7 +4,6 @@
 #include "glabs/graphics/ogl_geometry_input.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include "glabs/rendering/shader_library.hpp"
-#include <cwchar>
 
 namespace glabs
 {
@@ -37,6 +36,8 @@ namespace glabs
 		~LabTask_DrawNGon() override = default;
 
 		LabTaskKind GetKind() const override;
+		LabTaskKind GetNext() const override;
+		LabTaskKind GetPrev() const override;
 
 		void OnEnter() override;
 		void OnQuit() override;
@@ -53,8 +54,7 @@ namespace glabs
 
 		void RegenerateNGon();
 
-		void LoadNGonAsPoints();
-		void LoadNGonAsLines();
+		void LoadNGon();
 
 		Lab2Application* mApp = nullptr;
 
@@ -72,6 +72,7 @@ namespace glabs
 		float mPointSize = 1.0f;
 		bool mSmoothPoint = false;
 		float mLineWidth = 1.0f;
+		bool mSmoothLine = false;
 
 		OglBuffer mNGonPositions;
 		OglGeometryInput mNGonGeometry;
