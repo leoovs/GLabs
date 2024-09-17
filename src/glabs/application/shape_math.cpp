@@ -6,7 +6,7 @@ namespace glabs
 	{
 		std::vector<Vector2f> ngon(n);
 
-		float startAngle = 0.0f;
+		float startAngle = cPi / 2.0f;
 		float angleStep = 2 * cPi / static_cast<float>(n);
 
 		for (int32_t icorner = 0; icorner < n; icorner++)

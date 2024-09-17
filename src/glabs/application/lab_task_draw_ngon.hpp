@@ -62,7 +62,6 @@ namespace glabs
 		static constexpr int cNGonMaxSize = 10;
 
 		int mNGonSize = cNGonMinSize;
-		int mPrevNGonSize = cNGonMinSize;
 		float mNGonRadius = 0.5f;
 		Vector2f mNGonCenter = Vector2f(0.0f, 0.0f);
 		std::vector<Vector2f> mNGon;
