@@ -69,6 +69,15 @@ namespace glabs
 		DestroyNativeShaderProgram();
 	}
 
+	void OglShaderProgram::SetUniform(const std::string& name, int value)
+	{
+		glProgramUniform1i(
+			mNativeShaderProgram,
+			mUniformLocationCache.GetUniformLocation(name),
+			GLint(value)
+		);
+	}
+
 	void OglShaderProgram::SetUniform(const std::string& name, float value)
 	{
 		glProgramUniform1f(

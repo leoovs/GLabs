@@ -111,8 +111,8 @@ namespace glabs
 	{
 		mShaders = OglProgramPipeline(OglProgramPipeline::Params{ "NGon shaders" });
 
-		mNGonShaders[ShaderStage::Vertex].FetchFromFile("glsl/ngon_vert.glsl", "ngon-vert");
-		mNGonShaders[ShaderStage::Fragment].FetchFromFile("glsl/ngon_frag.glsl", "ngon-frag");
+		mNGonShaders[ShaderStage::Vertex].FetchFromFile("glsl/default_vert.glsl", "ngon-vert");
+		mNGonShaders[ShaderStage::Fragment].FetchFromFile("glsl/single_color_frag.glsl", "ngon-frag");
 
 		mShaders[ShaderStage::Vertex].Set(mNGonShaders[ShaderStage::Vertex].FromName("ngon-vert"));
 		mShaders[ShaderStage::Fragment].Set(mNGonShaders[ShaderStage::Fragment].FromName("ngon-frag"));

@@ -20,10 +20,6 @@ namespace glabs
 		int result = glfwInit();
 		assert(GLFW_TRUE == result);
 
-		if (mParams.EnableDebugContext)
-		{
-			glfwWindowHint(GLFW_CONTEXT_DEBUG, GLFW_TRUE);
-		}
 		if (mParams.OglVersionMajor)
 		{
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, mParams.OglVersionMajor);
@@ -31,6 +27,10 @@ namespace glabs
 		if (mParams.OglVersionMinor)
 		{
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, mParams.OglVersionMinor);
+		}
+		if (mParams.EnableDebugContext)
+		{
+			glfwWindowHint(GLFW_CONTEXT_DEBUG, GLFW_TRUE);
 		}
 		if (mParams.CoreProfile)
 		{

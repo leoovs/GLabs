@@ -88,8 +88,8 @@ namespace glabs
 
 	void LabTask_DrawFirstShape::LoadShaders()
 	{
-		mProgramLib[ShaderStage::Vertex].FetchFromFile("glsl/ngon_vert.glsl", "vert");
-		mProgramLib[ShaderStage::Fragment].FetchFromFile("glsl/ngon_frag.glsl", "frag");
+		mProgramLib[ShaderStage::Vertex].FetchFromFile("glsl/default_vert.glsl", "vert");
+		mProgramLib[ShaderStage::Fragment].FetchFromFile("glsl/single_color_frag.glsl", "frag");
 
 		mPrograms = OglProgramPipeline(OglProgramPipeline::Params{ "Shape shaders" });
 	}
