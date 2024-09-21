@@ -5,6 +5,7 @@
 #include "glabs/application/lab_task_draw_ngon_triangle_fan.hpp"
 #include "glabs/application/lab_task_draw_second_shape_line_strip.hpp"
 #include "glabs/application/lab_task_draw_second_shape_triangles.hpp"
+#include "glabs/application/lab_task_draw_third_shape.hpp"
 #include "glabs/graphics/ogl_debug_output.hpp"
 
 namespace glabs
@@ -59,6 +60,7 @@ namespace glabs
 			std::make_unique<LabTask_DrawSecondShapeLineStrip>(),
 			std::make_unique<LabTask_DrawSecondShapeTriangles>(),
 			std::make_unique<LabTask_DrawNGonTriangleFan>(),
+			std::make_unique<LabTask_DrawThirdShape>(),
 		};
 
 		for (std::unique_ptr<LabTask>& task : tasks)

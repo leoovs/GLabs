@@ -21,7 +21,7 @@ namespace glabs
 
 	LabTaskKind LabTask_DrawNGon::GetPrev() const
 	{
-		return LabTaskKind::None;
+		return LabTaskKind::DrawThirdShape;
 	}
 
 	void LabTask_DrawNGon::OnEnter()

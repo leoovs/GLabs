@@ -23,6 +23,7 @@ target_sources(
 	"src/glabs/application/lab_task_draw_ngon_triangle_fan.cpp"
 	"src/glabs/application/lab_task_draw_second_shape_line_strip.cpp"
 	"src/glabs/application/lab_task_draw_second_shape_triangles.cpp"
+	"src/glabs/application/lab_task_draw_third_shape.cpp"
 	"src/glabs/application/shape_math.cpp"
 
 	"src/glabs/graphics/glfw_life.cpp"
