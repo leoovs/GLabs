@@ -5,9 +5,9 @@ int main()
 {
 	glabs::GlfwLife::Params glfwParams;
 	glfwParams.EnableDebugContext = true;
-	glfwParams.CoreProfile = true;
-	glfwParams.OglVersionMajor = 4;
-	glfwParams.OglVersionMinor = 6;
+	glfwParams.CoreProfile = false;
+	// jglfwParams.OglVersionMajor = 4;
+	// glfwParams.OglVersionMinor = 6;
 
 	glabs::GlfwLife glfw(std::move(glfwParams));
 	{
