@@ -65,10 +65,8 @@ namespace glabs
 		switch (mDisplayStrategy)
 		{
 		case DisplayStrategy::A:
-			glPointSize(5.0f);
 			glPolygonMode(GL_FRONT, GL_POINT);
 			glPolygonMode(GL_BACK, GL_FILL);
-			glPointSize(1.0f);
 			break;
 		case DisplayStrategy::B:
 			glPolygonMode(GL_FRONT, GL_FILL);
@@ -88,6 +86,8 @@ namespace glabs
 		mPrograms.BindToPipeline();
 		mShapeGeometry.BindToPipeline();
 
+		glPointSize(10.0f);
+		glLineWidth(2.0f);
 		glDrawElements(GL_TRIANGLES, 21, GL_UNSIGNED_INT, nullptr);
 
 		glFrontFace(GL_CW);
