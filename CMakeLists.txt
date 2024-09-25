@@ -11,6 +11,7 @@ add_subdirectory("external/imgui")
 add_subdirectory("external/stb")
 
 CPMAddPackage("gh:glfw/glfw#3.4")
+CPMAddPackage("gh:g-truc/glm#1.0.1")
 
 add_executable(glabs)
 
@@ -61,6 +62,7 @@ target_link_libraries(
 	glew
 	imgui
 	stb
+	glm
 )
 
 set_target_properties(
