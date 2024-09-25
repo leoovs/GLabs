@@ -61,7 +61,7 @@ namespace glabs
 			GraphicsFormat Format = GraphicsFormat::R8G8B8_UNORM;
 		};
 
-		static constexpr int32_t CalculateMipLevels(int32_t width, int32_t height)
+		static int32_t CalculateMipLevels(int32_t width, int32_t height)
 		{
 			return std::log2(std::max(width, height)) + 1;
 		}
