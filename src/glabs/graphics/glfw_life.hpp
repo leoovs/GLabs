@@ -8,8 +8,7 @@ namespace glabs
 		struct Params
 		{
 			bool EnableDebugContext = true;
-			int OglVersionMajor = 0;
-			int OglVersionMinor = 0;
+			std::pair<int32_t, int32_t> Version;
 			bool CoreProfile = true;
 		};
 

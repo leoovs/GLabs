@@ -9,6 +9,8 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <typeindex>
+#include <typeinfo>
 #include <utility>
 
 #include <array>

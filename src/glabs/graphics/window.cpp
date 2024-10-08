@@ -152,7 +152,10 @@ namespace glabs
 
 	void Window::RestoreThisInNativeWindow()
 	{
-		BindThisToNativeWindow(this, mNativeWindow);
+		if (mNativeWindow)
+		{
+			BindThisToNativeWindow(this, mNativeWindow);
+		}
 	}
 }
 

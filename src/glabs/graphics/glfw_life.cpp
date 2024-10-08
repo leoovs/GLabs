@@ -20,13 +20,13 @@ namespace glabs
 		int result = glfwInit();
 		assert(GLFW_TRUE == result);
 
-		if (mParams.OglVersionMajor)
+		if (mParams.Version.first)
 		{
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, mParams.OglVersionMajor);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, mParams.Version.first);
 		}
-		if (mParams.OglVersionMinor)
+		if (mParams.Version.second)
 		{
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, mParams.OglVersionMinor);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, mParams.Version.second);
 		}
 		if (mParams.EnableDebugContext)
 		{
