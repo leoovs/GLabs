@@ -1,0 +1,24 @@
+#include "glabs/app/imgui_app_config.hpp"
+
+namespace glabs
+{
+	void ImGuiAppConfig::Apply(AppConfigurator& configurator)
+	{
+		SetupImGuiContext();
+	}
+
+	void ImGuiAppConfig::Undo(AppConfigurator& configurator)
+	{
+		mImGui = DearImGui();
+	}
+
+	DearImGui& ImGuiAppConfig::GetImGui()
+	{
+		return mImGui;
+	}
+
+	void ImGuiAppConfig::SetupImGuiContext()
+	{
+	}
+}
+

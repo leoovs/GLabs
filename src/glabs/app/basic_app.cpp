@@ -1,4 +1,5 @@
 #include "glabs/app/basic_app.hpp"
+#include "glabs/app/imgui_app_config.hpp"
 #include "glabs/app/window_app_config.hpp"
 #include "glabs/graphics/ogl_debug_output.hpp"
 
@@ -19,6 +20,11 @@ namespace glabs
 		return GetConfigurator().GetConfig<WindowAppConfig>().GetAppWindow();
 	}
 
+	DearImGui& BasicApp::GetImGui() const
+	{
+		return GetConfigurator().GetConfig<ImGuiAppConfig>().GetImGui();
+	}
+
 	void BasicApp::Quit()
 	{
 		mRunning = false;
@@ -29,6 +35,7 @@ namespace glabs
 		mAppConfigurator = &configurator;
 
 		configurator.SetConfig<WindowAppConfig>();
+		configurator.SetConfig<ImGuiAppConfig>();
 	}
 
 	void BasicApp::Start()

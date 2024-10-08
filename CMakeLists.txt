@@ -21,6 +21,7 @@ target_sources(
 	"src/glabs/app/app_configurator.cpp"
 	"src/glabs/app/app_container.cpp"
 	"src/glabs/app/basic_app.cpp"
+	"src/glabs/app/imgui_app_config.cpp"
 	"src/glabs/app/window_app_config.cpp"
 
 	"src/glabs/graphics/glfw_life.cpp"

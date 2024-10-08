@@ -2,6 +2,7 @@
 
 #include "glabs/app/app.hpp"
 #include "glabs/graphics/window.hpp"
+#include "glabs/rendering/dear_imgui.hpp"
 
 namespace glabs
 {
@@ -14,6 +15,7 @@ namespace glabs
 
 		AppConfigurator& GetConfigurator() const;
 		Window& GetWindow() const;
+		DearImGui& GetImGui() const;
 
 		void Quit();
 
