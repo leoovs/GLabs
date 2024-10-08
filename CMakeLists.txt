@@ -18,15 +18,6 @@ add_executable(glabs)
 target_sources(
 	glabs
 	PRIVATE
-	"src/glabs/application/lab2_application.cpp"
-	"src/glabs/application/lab_task_draw_first_shape.cpp"
-	"src/glabs/application/lab_task_draw_ngon.cpp"
-	"src/glabs/application/lab_task_draw_ngon_triangle_fan.cpp"
-	"src/glabs/application/lab_task_draw_second_shape_line_strip.cpp"
-	"src/glabs/application/lab_task_draw_second_shape_triangles.cpp"
-	"src/glabs/application/lab_task_draw_third_shape.cpp"
-	"src/glabs/application/shape_math.cpp"
-
 	"src/glabs/graphics/glfw_life.cpp"
 	"src/glabs/graphics/image2d.cpp"
 	"src/glabs/graphics/ogl_buffer.cpp"
