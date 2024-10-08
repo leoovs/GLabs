@@ -11,7 +11,9 @@ namespace glabs
 	protected:
 		virtual void OnWindowClose();
 		virtual void OnWindowResize(int32_t width, int32_t height) {}
+		virtual void OnStart() {}
 		virtual void OnUpdate() {}
+		virtual void OnQuit() {}
 
 		AppConfigurator& GetConfigurator() const;
 		Window& GetWindow() const;

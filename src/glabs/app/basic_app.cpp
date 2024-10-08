@@ -27,6 +27,8 @@ namespace glabs
 
 	void BasicApp::Quit()
 	{
+		OnQuit();
+
 		mRunning = false;
 	}
 
@@ -43,7 +45,10 @@ namespace glabs
 		SetupWindowCallbacks();
 		SetupOglDebugCallback();
 		PrintOglVersion();
+
 		mRunning = true;
+
+		OnStart();
 	}
 
 	void BasicApp::Update()
