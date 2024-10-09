@@ -10,6 +10,11 @@ namespace glabs
 		Quit();
 	}
 
+	std::string_view BasicApp::GetName() const
+	{
+		return "Unnamed Basic App";
+	}
+
 	AppConfigurator& BasicApp::GetConfigurator() const
 	{
 		return *mAppConfigurator;
@@ -36,7 +41,7 @@ namespace glabs
 	{
 		mAppConfigurator = &configurator;
 
-		configurator.SetConfig<WindowAppConfig>();
+		configurator.SetConfig<WindowAppConfig>(std::string(GetName()), 1280, 720);
 		configurator.SetConfig<ImGuiAppConfig>();
 	}
 
