@@ -14,6 +14,7 @@ namespace glabs
 		virtual void OnStart() {}
 		virtual void OnUpdate() {}
 		virtual void OnQuit() {}
+		virtual std::string_view GetName() const;
 
 		AppConfigurator& GetConfigurator() const;
 		Window& GetWindow() const;
