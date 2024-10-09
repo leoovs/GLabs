@@ -35,6 +35,7 @@ target_sources(
 	"src/glabs/graphics/window.cpp"
 
 	"src/glabs/lab3/lab3app.cpp"
+	"src/glabs/lab3/task1.cpp"
 
 	"src/glabs/rendering/dear_imgui.cpp"
 	"src/glabs/rendering/shader_library.cpp"
