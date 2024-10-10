@@ -83,12 +83,12 @@ namespace glabs
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		GetImGui().RenderDrawData(ImGui::GetDrawData());
-
 		if (Task* t = GetCurrentTask())
 		{
 			t->OnRender();
 		}
+
+		GetImGui().RenderDrawData(ImGui::GetDrawData());
 
 		GetWindow().Present();
 	}
