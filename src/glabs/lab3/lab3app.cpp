@@ -1,6 +1,7 @@
 #include "glabs/lab3/lab3app.hpp"
 #include "glabs/lab3/task1.hpp"
 #include "glabs/lab3/task2.hpp"
+#include "glabs/lab3/task3.hpp"
 
 namespace glabs
 {
@@ -99,6 +100,7 @@ namespace glabs
 		mTasks = {
 			std::make_unique<Task1>(),
 			std::make_unique<Task2>(),
+			std::make_unique<Task3>(),
 		};
 	}
 

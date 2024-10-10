@@ -16,6 +16,6 @@ uniform mat4 proj;
 void main()
 {
     color = inColor;
-    gl_Position = vec4(inPosition, 0.0f, 1.0f) * model * proj;
+    gl_Position = proj * model * vec4(inPosition, 0.0f, 1.0f);
 }
 

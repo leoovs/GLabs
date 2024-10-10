@@ -68,13 +68,13 @@ namespace glabs
 		mPrograms.BindToPipeline();
 
 		float orthoZoom = 1.0f * mZoom;
-		mPrograms[ShaderStage::Vertex].Get().SetUniform("proj", glm::ortho(-orthoZoom, orthoZoom, -orthoZoom, orthoZoom), true);
+		mPrograms[ShaderStage::Vertex].Get().SetUniform("proj", glm::ortho(-orthoZoom, orthoZoom, -orthoZoom, orthoZoom));
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		if (mShowLine)
 		{
-			mPrograms[ShaderStage::Vertex].Get().SetUniform("model", mLineModel, true);
+			mPrograms[ShaderStage::Vertex].Get().SetUniform("model", mLineModel);
 			glDrawElements(
 				GL_LINES,
 				2,
@@ -85,7 +85,7 @@ namespace glabs
 
 		if (mShowTriangle)
 		{
-			mPrograms[ShaderStage::Vertex].Get().SetUniform("model", mTriangleModel, true);
+			mPrograms[ShaderStage::Vertex].Get().SetUniform("model", mTriangleModel);
 			glDrawElements(
 				GL_TRIANGLES,
 				3,
@@ -96,7 +96,7 @@ namespace glabs
 
 		if (mShowRect)
 		{
-			mPrograms[ShaderStage::Vertex].Get().SetUniform("model", mRectangleModel, true);
+			mPrograms[ShaderStage::Vertex].Get().SetUniform("model", mRectangleModel);
 			glDrawElements(
 				GL_TRIANGLES,
 				6,
