@@ -1,5 +1,7 @@
 #include "glabs/graphics/ogl_shader_program.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace glabs
 {
 	//+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -110,6 +112,21 @@ namespace glabs
 			x1,
 			x2,
 			x3
+		);
+	}
+
+	void OglShaderProgram::SetUniform(
+		const std::string& name,
+		const glm::mat4& value,
+		bool transpose
+	)
+	{
+		glProgramUniformMatrix4fv(
+			mNativeShaderProgram,
+			mUniformLocationCache.GetUniformLocation(name),
+			1,
+			transpose ? GL_TRUE : GL_FALSE,
+			glm::value_ptr(value)
 		);
 	}
 
