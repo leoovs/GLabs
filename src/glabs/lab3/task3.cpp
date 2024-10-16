@@ -2,7 +2,6 @@
 #include "glabs/graphics/ogl_geometry_input.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include "imgui.h"
-#include "imgui_internal.h"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
