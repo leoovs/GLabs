@@ -39,6 +39,7 @@ target_sources(
 	"src/glabs/rendering/dear_imgui.cpp"
 	"src/glabs/rendering/frame_timer.cpp"
 	"src/glabs/rendering/mesh.cpp"
+	"src/glabs/rendering/mesh2.cpp"
 	"src/glabs/rendering/mesh_attribute.cpp"
 	"src/glabs/rendering/shader_library.cpp"
 	"src/glabs/rendering/sub_mesh.cpp"

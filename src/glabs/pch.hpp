@@ -14,6 +14,7 @@
 #include <typeinfo>
 #include <utility>
 
+#include <algorithm>
 #include <array>
 #include <queue>
 #include <string>
