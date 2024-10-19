@@ -38,6 +38,7 @@ target_sources(
 	"src/glabs/rendering/camera.cpp"
 	"src/glabs/rendering/dear_imgui.cpp"
 	"src/glabs/rendering/mesh.cpp"
+	"src/glabs/rendering/mesh_attribute.cpp"
 	"src/glabs/rendering/shader_library.cpp"
 	"src/glabs/rendering/frame_timer.cpp"
 
