@@ -35,7 +35,7 @@ namespace glabs
 		DestroyNativeVertexArray();
 	}
 
-	void OglGeometryInput::BindToPipeline()
+	void OglGeometryInput::BindToPipeline() const
 	{
 		glBindVertexArray(mNativeVertexArray);
 	}

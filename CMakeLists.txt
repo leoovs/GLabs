@@ -12,6 +12,7 @@ add_subdirectory("external/stb")
 
 CPMAddPackage("gh:glfw/glfw#3.4")
 CPMAddPackage("gh:g-truc/glm#1.0.1")
+CPMAddPackage("gh:tinyobjloader/tinyobjloader@1.0.6")
 
 add_executable(glabs)
 
@@ -34,8 +35,11 @@ target_sources(
 	"src/glabs/graphics/ogl_texture2d.cpp"
 	"src/glabs/graphics/window.cpp"
 
+	"src/glabs/rendering/camera.cpp"
 	"src/glabs/rendering/dear_imgui.cpp"
+	"src/glabs/rendering/mesh.cpp"
 	"src/glabs/rendering/shader_library.cpp"
+	"src/glabs/rendering/frame_timer.cpp"
 
 	"src/glabs/main.cpp"
 )
@@ -60,6 +64,7 @@ target_link_libraries(
 	imgui
 	stb
 	glm::glm
+	tinyobjloader
 )
 
 set_target_properties(

@@ -52,6 +52,11 @@ namespace glabs
 	{
 		size_t InputSlot = 0;
 		VertexFormat Format = VertexFormat::Float;
+
+		VertexParams(size_t inputSlot, VertexFormat format)
+			: InputSlot(inputSlot)
+			, Format(format)
+		{}
 	};
 
 	class OglGeometryInput
@@ -75,7 +80,7 @@ namespace glabs
 
 		~OglGeometryInput();
 
-		void BindToPipeline();
+		void BindToPipeline() const;
 
 	private:
 		void CreateNativeVertexArray();

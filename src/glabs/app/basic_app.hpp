@@ -3,6 +3,7 @@
 #include "glabs/app/app.hpp"
 #include "glabs/graphics/window.hpp"
 #include "glabs/rendering/dear_imgui.hpp"
+#include "glabs/rendering/frame_timer.hpp"
 
 namespace glabs
 {
@@ -12,7 +13,7 @@ namespace glabs
 		virtual void OnWindowClose();
 		virtual void OnWindowResize(int32_t width, int32_t height) {}
 		virtual void OnStart() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(float dt) {}
 		virtual void OnQuit() {}
 		virtual std::string_view GetName() const;
 
@@ -21,6 +22,8 @@ namespace glabs
 		DearImGui& GetImGui() const;
 
 		void Quit();
+		bool IsKeyDown(int glfwKey) const;
+		bool IsKeyUp(int glfwKey) const;
 
 	private:
 		void Configure(AppConfigurator& configurator) override;
@@ -35,6 +38,7 @@ namespace glabs
 		void PrintOglVersion();
 
 		bool mRunning = false;
+		FrameTimer mTimer;
 		AppConfigurator* mAppConfigurator = nullptr;
 	};
 }

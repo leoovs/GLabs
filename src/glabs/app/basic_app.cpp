@@ -37,6 +37,16 @@ namespace glabs
 		mRunning = false;
 	}
 
+	bool BasicApp::IsKeyDown(int glfwKey) const
+	{
+		return glfwGetKey(GetWindow().GetNativeWindow(), glfwKey) & GLFW_PRESS;
+	}
+
+	bool BasicApp::IsKeyUp(int glfwKey) const
+	{
+		return glfwGetKey(GetWindow().GetNativeWindow(), glfwKey) & GLFW_RELEASE;
+	}
+
 	void BasicApp::Configure(AppConfigurator& configurator)
 	{
 		mAppConfigurator = &configurator;
@@ -52,14 +62,16 @@ namespace glabs
 		PrintOglVersion();
 
 		mRunning = true;
+		mTimer.Tick();
 
 		OnStart();
 	}
 
 	void BasicApp::Update()
 	{
+		mTimer.Tick();
 		GetWindow().PollEvents();
-		OnUpdate();
+		OnUpdate(mTimer.GetDeltaTime());
 	}
 
 	bool BasicApp::IsRunning() const
