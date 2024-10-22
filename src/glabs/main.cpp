@@ -2,8 +2,10 @@
 #include "glabs/app/app_container.hpp"
 #include "glabs/app/basic_app.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
+#include "glabs/graphics/ogl_texture2d.hpp"
 #include "glabs/pch.hpp"
 #include "glabs/rendering/mesh.hpp"
+#include "glabs/rendering/obj_importer.hpp"
 #include "glabs/rendering/shader_library.hpp"
 #include "glabs/rendering/camera.hpp"
 
@@ -35,7 +37,10 @@ class TestApp : public BasicApp
 private:
 	void OnStart() override
 	{
-		mModel = Mesh::FromObjFile("glsl/sphere.obj");
+		mModel = ObjImporter()
+			.OpenFile("C:/Users/Leonid/Desktop/stormtrooper.obj")
+			.LoadAllShapes()
+			.Build();
 
 		mPrograms = OglProgramPipeline({ "shaders" });
 
@@ -45,6 +50,8 @@ private:
 			.FetchFromFile("glsl/frag.glsl", "basic"));
 
 		mCam = Camera(glm::vec3(0.0f, 0.0f, 13.0f));
+
+		glfwSetInputMode(GetWindow().GetNativeWindow(), GLFW_CURSOR_HIDDEN, GLFW_TRUE);
 	}
 
 	void OnWindowResize(int32_t width, int32_t height) override
@@ -67,11 +74,14 @@ private:
 
 		mPrograms[ShaderStage::Vertex].Get().SetUniform("uMVP", proj * view * mEntity.CalculateMatrix());
 
-		mModel.BindToPipeline();
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		// glDrawArrays(GL_TRIANGLES, 0, mModel.GetVertexCount());
-		glDrawElements(GL_TRIANGLES, mModel.GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+		mModel.ForEachShape(
+			[](const Submesh& shape)
+			{
+				shape.GetGeometry().BindToPipeline();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glDrawArrays(GL_TRIANGLES, 0, shape.GetVertexCount());
+			}
+		);
 
 		window.Present();
 	}
@@ -92,18 +102,51 @@ private:
 		if (IsKeyDown(GLFW_KEY_W))
 		{
 			glm::vec3 forward(0.0f, 0.0f, -speed);
-			mCam.Move(forward * dt);
+			mCam.RelMove(forward * dt);
 		}
 		if (IsKeyDown(GLFW_KEY_S))
 		{
 			glm::vec3 forward(0.0f, 0.0f, speed);
-			mCam.Move(forward * dt);
+			mCam.RelMove(forward * dt);
+		}
+		if (IsKeyDown(GLFW_KEY_SPACE))
+		{
+			glm::vec3 up(0.0f, speed, 0.0f);
+			mCam.Move(up * dt);
+		}
+		if (IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+		{
+			glm::vec3 down(0.0f, -speed, 0.0f);
+			mCam.Move(down * dt);
 		}
 
 		Render();
 	}
 
-	Mesh mModel;
+	void OnMouseMove(float x, float y) override
+	{
+		constexpr float cSensitivity = 0.007f;
+
+		static float sPrev[]{ INFINITY, INFINITY };
+		float prev[]
+		{
+			INFINITY == sPrev[0] ? x : sPrev[0],
+			INFINITY == sPrev[1] ? y : sPrev[1],
+		};
+
+		float dx = x - prev[0];
+		float dy = y - prev[1];
+
+		sPrev[0] = x;
+		sPrev[1] = y;
+
+		glm::vec3 rotation(-dy, 0.0f, dx);
+		rotation *= cSensitivity;
+
+		mCam.Rotate(rotation);
+	}
+
+	Mesh2 mModel;
 	Entity mEntity;
 	Camera mCam;
 

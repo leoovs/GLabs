@@ -96,6 +96,13 @@ namespace glabs
 				OnWindowResize(width, height);
 			}
 		);
+
+		window.SetMouseMoveCallback(
+			[this](float x, float y)
+			{
+				OnMouseMove(x, y);
+			}
+		);
 	}
 
 	void BasicApp::SetupOglDebugCallback()

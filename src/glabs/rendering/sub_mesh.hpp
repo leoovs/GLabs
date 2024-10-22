@@ -10,6 +10,10 @@ namespace glabs
 	public:
 		Submesh(std::string_view name = "Unnamed Submesh");
 
+		Submesh(Submesh&& other) noexcept = default;
+
+		Submesh& operator=(Submesh&& other) noexcept = default;
+
 		void SetName(std::string_view name);
 		std::string_view GetName() const;
 
@@ -19,16 +23,18 @@ namespace glabs
 		void SetVertexBufferData(const void* data);
 		void SetIndexBufferData(const void* data);
 
-		void SetLayoutParams(OglGeometryInput::Params layoutParams);
+		void SetVertexParams(std::vector<VertexParams> vertexParams);
 
-		const OglGeometryInput& GetLayout() const;
+		size_t GetVertexCount() const;
+		size_t GetIndexCount() const;
+		const OglGeometryInput& GetGeometry() const;
 
 	private:
 		std::string mName = "Unnamed Submesh";
 
 		OglBuffer mVertexBuffer;
 		OglBuffer mIndexBuffer;
-		OglGeometryInput mLayout;
+		OglGeometryInput mGeometry;
 	};
 }
 

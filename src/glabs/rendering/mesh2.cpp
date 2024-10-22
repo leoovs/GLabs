@@ -36,10 +36,5 @@ namespace glabs
 
 		return *it;
 	}
-
-	const std::vector<Submesh>& Mesh2::GetShapes() const
-	{
-		return mShapes;
-	}
 }
 

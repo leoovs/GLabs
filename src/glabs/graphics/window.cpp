@@ -72,6 +72,11 @@ namespace glabs
 		mSizeCallback = std::move(callback);
 	}
 
+	void Window::SetMouseMoveCallback(std::function<MouseMoveCallback> callback)
+	{
+		mMouseMoveCallback = std::move(callback);
+	}
+
 	void Window::PollEvents()
 	{
 		glfwPollEvents();
@@ -145,6 +150,18 @@ namespace glabs
 				if (self->mSizeCallback)
 				{
 					self->mSizeCallback(static_cast<int32_t>(width), static_cast<int32_t>(height));
+				}
+			}
+		);
+
+		glfwSetCursorPosCallback(
+			mNativeWindow,
+			[](GLFWwindow* nativeWindow, double xpos, double ypos)
+			{
+				Window* self = GetThisFromNativeWindow(nativeWindow);
+				if (self->mMouseMoveCallback)
+				{
+					self->mMouseMoveCallback(float(xpos), float(ypos));
 				}
 			}
 		);

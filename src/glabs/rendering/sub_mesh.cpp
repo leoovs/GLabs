@@ -1,4 +1,5 @@
 #include "glabs/rendering/sub_mesh.hpp"
+#include "glabs/graphics/ogl_geometry_input.hpp"
 
 namespace glabs
 {
@@ -30,8 +31,8 @@ namespace glabs
 	void Submesh::SetIndexBufferSize(size_t indicesCount)
 	{
 		OglBuffer::Params indexBufferParams;
-		indexBufferParams.Target = GL_ELEMENT_ARRAY_BUFFER;
 		indexBufferParams.DebugName = mName + ";ibo";
+		indexBufferParams.Target = GL_ELEMENT_ARRAY_BUFFER;
 		indexBufferParams.ElementSize = sizeof(unsigned int);
 		indexBufferParams.ElementCount = indicesCount;
 
@@ -48,14 +49,30 @@ namespace glabs
 		mIndexBuffer.SetData(data);
 	}
 
-	void Submesh::SetLayoutParams(OglGeometryInput::Params layoutParams)
+	void Submesh::SetVertexParams(std::vector<VertexParams> vertexParams)
 	{
-		mLayout = OglGeometryInput(std::move(layoutParams));
+		OglGeometryInput::Params geometryParams;
+		geometryParams.DebugName = mName + ";vao";
+		geometryParams.IndexBuffer = &mIndexBuffer;
+		geometryParams.VertexBuffers[0] = &mVertexBuffer;
+		geometryParams.Vertices = std::move(vertexParams);
+
+		mGeometry = OglGeometryInput(std::move(geometryParams));
 	}
 
-	const OglGeometryInput& Submesh::GetLayout() const
+	size_t Submesh::GetVertexCount() const
 	{
-		return mLayout;
+		return mVertexBuffer.GetParams().ElementCount;
+	}
+
+	size_t Submesh::GetIndexCount() const
+	{
+		return mIndexBuffer.GetParams().ElementCount;
+	}
+
+	const OglGeometryInput& Submesh::GetGeometry() const
+	{
+		return mGeometry;
 	}
 }
 

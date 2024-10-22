@@ -9,6 +9,7 @@ namespace glabs
 	public:
 		using CloseCallback = void();
 		using SizeCallback = void(int32_t, int32_t);
+		using MouseMoveCallback = void(float, float);
 
 		Window() = default;
 		Window(int32_t width, int32_t height, std::string_view title);
@@ -25,6 +26,7 @@ namespace glabs
 
 		void SetCloseCallback(std::function<CloseCallback> callback);
 		void SetSizeCallback(std::function<SizeCallback> callback);
+		void SetMouseMoveCallback(std::function<MouseMoveCallback> callback);
 
 		void PollEvents();
 		void Present();
@@ -44,6 +46,7 @@ namespace glabs
 
 		std::function<CloseCallback> mCloseCallback;
 		std::function<SizeCallback> mSizeCallback;
+		std::function<MouseMoveCallback> mMouseMoveCallback;
 	};
 }
 

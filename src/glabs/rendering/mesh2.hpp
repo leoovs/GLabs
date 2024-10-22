@@ -14,7 +14,15 @@ namespace glabs
 
 		void Insert(Submesh shape);
 		Submesh& FindShape(std::string_view name);
-		const std::vector<Submesh>& GetShapes() const;
+
+		template<typename CallableT>
+		void ForEachShape(const CallableT& callable) const
+		{
+			for (const Submesh& shape : mShapes)
+			{
+				callable(shape);
+			}
+		}
 
 	private:
 		std::string mName;
