@@ -38,7 +38,7 @@ private:
 	void OnStart() override
 	{
 		mModel = ObjImporter()
-			.OpenFile("C:/Users/Leonid/Desktop/stormtrooper.obj")
+			.OpenFile("glsl/sphere.obj")
 			.LoadAllShapes()
 			.Build();
 
@@ -102,12 +102,12 @@ private:
 		if (IsKeyDown(GLFW_KEY_W))
 		{
 			glm::vec3 forward(0.0f, 0.0f, -speed);
-			mCam.RelMove(forward * dt);
+			mCam.Move(forward * dt);
 		}
 		if (IsKeyDown(GLFW_KEY_S))
 		{
 			glm::vec3 forward(0.0f, 0.0f, speed);
-			mCam.RelMove(forward * dt);
+			mCam.Move(forward * dt);
 		}
 		if (IsKeyDown(GLFW_KEY_SPACE))
 		{
@@ -123,30 +123,7 @@ private:
 		Render();
 	}
 
-	void OnMouseMove(float x, float y) override
-	{
-		constexpr float cSensitivity = 0.007f;
-
-		static float sPrev[]{ INFINITY, INFINITY };
-		float prev[]
-		{
-			INFINITY == sPrev[0] ? x : sPrev[0],
-			INFINITY == sPrev[1] ? y : sPrev[1],
-		};
-
-		float dx = x - prev[0];
-		float dy = y - prev[1];
-
-		sPrev[0] = x;
-		sPrev[1] = y;
-
-		glm::vec3 rotation(-dy, 0.0f, dx);
-		rotation *= cSensitivity;
-
-		mCam.Rotate(rotation);
-	}
-
-	Mesh2 mModel;
+	Mesh mModel;
 	Entity mEntity;
 	Camera mCam;
 

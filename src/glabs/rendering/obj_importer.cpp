@@ -50,12 +50,12 @@ namespace glabs
 		return *this;
 	}
 
-	Mesh2 ObjImporter::Build()
+	Mesh ObjImporter::Build()
 	{
 		assert(State::ObjLoaded == mState);
 		mState = State::Committed;
 
-		Mesh2 mesh = std::move(mImportedMesh);
+		Mesh mesh = std::move(mImportedMesh);
 		return mesh;
 	}
 
@@ -145,6 +145,12 @@ namespace glabs
 		Submesh shape(shapeData.name);
 		shape.SetVertexBufferSize(vertexSize, vertexCount);
 		shape.SetVertexBufferData(vertexData.data());
+
+		// FIXME: temporary measure, currently we are not using the index buffer to
+		// optimize memory usage, but we need to allocate it in order for the
+		// assertion to pass.
+		shape.SetIndexBufferSize(1);
+
 		shape.SetVertexParams(GetVertexParamsFromAttributes(attributes));
 
 		mImportedMesh.Insert(std::move(shape));

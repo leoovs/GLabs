@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glabs/pch.hpp"
-#include "glabs/rendering/mesh2.hpp"
+#include "glabs/rendering/mesh.hpp"
 #include "glabs/rendering/mesh_attribute.hpp"
 
 namespace glabs
@@ -12,7 +12,7 @@ namespace glabs
 		ObjImporter& OpenFile(const std::filesystem::path& meshFilePath);
 		ObjImporter& LoadShape(std::string_view shapeName);
 		ObjImporter& LoadAllShapes();
-		Mesh2 Build();
+		Mesh Build();
 
 	private:
 		enum class State
@@ -29,7 +29,7 @@ namespace glabs
 
 		void LoadShapeByIndex(size_t shapeIndex);
 
-		Mesh2 mImportedMesh;
+		Mesh mImportedMesh;
 		State mState = State::Uncommited;
 
 		tinyobj::attrib_t mAttributes;
