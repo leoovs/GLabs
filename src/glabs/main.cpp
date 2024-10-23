@@ -46,7 +46,7 @@ private:
 	void OnStart() override
 	{
 		mModel = ObjImporter()
-			.OpenFile("D:/dev/cpp/Xuzumi_1/Testbed/assets/model/stormtrooper.obj")
+			.OpenFile("glsl/sphere.obj")
 			.LoadAllShapes()
 			.Build();
 
@@ -217,11 +217,6 @@ private:
 
 	void OnMouseMove(float x, float y) override
 	{
-		if (!mIsFocused)
-		{
-			return;
-		}
-
 		constexpr float cSensitivity = 0.004f;
 
 		static float sX = x;
@@ -233,9 +228,10 @@ private:
 		sX = x;
 		sY = y;
 
-		mCam.Rotate(glm::vec3(-dy, -dx, 0.0f) * cSensitivity);
-
-		const glm::vec3& rotation = mCam.GetRotation();
+		if (mIsFocused)
+		{
+			mCam.Rotate(glm::vec3(-dy, -dx, 0.0f) * cSensitivity);
+		}
 	}
 
 	Mesh mModel;
