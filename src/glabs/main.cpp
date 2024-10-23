@@ -4,7 +4,6 @@
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include "glabs/graphics/ogl_texture2d.hpp"
 #include "glabs/pch.hpp"
-#include "glabs/rendering/camera2.hpp"
 #include "glabs/rendering/mesh.hpp"
 #include "glabs/rendering/obj_importer.hpp"
 #include "glabs/rendering/shader_library.hpp"
@@ -164,7 +163,7 @@ private:
 
 	Mesh mModel;
 	Entity mModelEntity{};
-	Camera2 mCam;
+	Camera mCam;
 	Entity mCameraEntity{};
 
 	ShaderLibrary mShaders;

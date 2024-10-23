@@ -7,17 +7,30 @@ namespace glabs
 	class Camera
 	{
 	public:
-		Camera() = default;
+		glm::mat4 LookAt(const glm::vec3& eyePosition) const;
 
-		Camera(const glm::vec3& position);
+		void Rotate(const glm::vec3& rotation);
+		void SetRotation(const glm::vec3& rotation);
 
-		glm::mat4 GetLookAt() const;
-		const glm::vec3& GetPosition() const;
-
-		void Move(const glm::vec3& movement);
+		const glm::vec3& GetRotation() const;
+		const glm::vec3& GetFront() const;
+		const glm::vec3& GetUp() const;
+		const glm::vec3& GetRight() const;
 
 	private:
-		glm::vec3 mPosition;
+		static float WrapAngle(float radians);
+
+		void UpdateVectors();
+		void WrapRotation();
+
+		glm::vec3 mRotation = glm::vec3(0.0f);
+		glm::vec3 mFront = cWorldFront;
+		glm::vec3 mUp = cWorldUp;
+		glm::vec3 mRight = cWorldRight;
+
+		static constexpr glm::vec3 cWorldFront{ 0.0f, 0.0f, -1.0f };
+		static constexpr glm::vec3 cWorldUp{ 0.0f, 1.0f, 0.0f };
+		static constexpr glm::vec3 cWorldRight{ 1.0f, 0.0f, 0.0f };
 	};
 }
 

@@ -4,7 +4,7 @@
 
 namespace glabs
 {
-	class Camera2
+	class Camera
 	{
 	public:
 		glm::mat4 LookAt(const glm::vec3& eyePosition) const;
