@@ -1,5 +1,6 @@
 #pragma once
 
+#include "glabs/graphics/ogl_texture2d.hpp"
 #include "glabs/graphics/window.hpp"
 
 namespace glabs
@@ -23,8 +24,10 @@ namespace glabs
 
 		const Params& GetParams() const;
 
-		void NewFrame();
-		void RenderDrawData(ImDrawData* data);
+		void NewFrame() const;
+		void RenderDrawData(ImDrawData* data) const;
+
+		ImTextureID GetTextureID(const OglTexture2D& texture) const;
 
 	private:
 		void InitContext();

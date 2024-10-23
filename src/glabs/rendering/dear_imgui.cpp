@@ -39,16 +39,22 @@ namespace glabs
 		return mParams;
 	}
 
-	void DearImGui::NewFrame()
+	void DearImGui::NewFrame() const
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
 
-	void DearImGui::RenderDrawData(ImDrawData* data)
+	void DearImGui::RenderDrawData(ImDrawData* data) const
 	{
 		ImGui_ImplOpenGL3_RenderDrawData(data);
+	}
+
+	ImTextureID DearImGui::GetTextureID(const OglTexture2D& texture) const
+	{
+		auto ptr = static_cast<uintptr_t>(texture.GetNativeTexture2D());
+		return reinterpret_cast<void*>(ptr);
 	}
 
 	void DearImGui::InitContext()

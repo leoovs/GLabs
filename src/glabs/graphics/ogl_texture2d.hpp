@@ -8,6 +8,7 @@ namespace glabs
 	{
 		R8G8B8_UNORM,
 		R8G8B8A8_UNORM,
+		D32_UNORM,
 	};
 
 	constexpr GLenum GetInternalFormat(GraphicsFormat format)
@@ -18,6 +19,8 @@ namespace glabs
 			return GL_RGB8;
 		case GraphicsFormat::R8G8B8A8_UNORM:
 			return GL_RGBA8;
+		case GraphicsFormat::D32_UNORM:
+			return GL_DEPTH_COMPONENT32;
 		default:
 			return 0;
 		}
@@ -30,6 +33,8 @@ namespace glabs
 		case GraphicsFormat::R8G8B8_UNORM:
 		case GraphicsFormat::R8G8B8A8_UNORM:
 			return GL_UNSIGNED_BYTE;
+		case GraphicsFormat::D32_UNORM:
+			return GL_UNSIGNED_INT;
 		default:
 			return 0;
 		}
@@ -43,6 +48,8 @@ namespace glabs
 			return GL_RGB;
 		case GraphicsFormat::R8G8B8A8_UNORM:
 			return GL_RGBA;
+		case GraphicsFormat::D32_UNORM:
+			return GL_DEPTH_COMPONENT;
 		default:
 			return 0;
 		}

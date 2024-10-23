@@ -1,9 +1,11 @@
 #include "glabs/graphics/glfw_life.hpp"
 #include "glabs/app/app_container.hpp"
 #include "glabs/app/basic_app.hpp"
+#include "glabs/graphics/ogl_framebuffer.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include "glabs/graphics/ogl_texture2d.hpp"
 #include "glabs/pch.hpp"
+#include "glabs/rendering/dear_imgui.hpp"
 #include "glabs/rendering/mesh.hpp"
 #include "glabs/rendering/obj_importer.hpp"
 #include "glabs/rendering/shader_library.hpp"
@@ -44,7 +46,7 @@ private:
 	void OnStart() override
 	{
 		mModel = ObjImporter()
-			.OpenFile("glsl/sphere.obj")
+			.OpenFile("D:/dev/cpp/Xuzumi_1/Testbed/assets/model/stormtrooper.obj")
 			.LoadAllShapes()
 			.Build();
 
@@ -58,7 +60,24 @@ private:
 		mModelEntity.Translation = { 0.0f, 0.0f, 0.0f };
 		mCameraEntity.Translation = { 0.0f, 0.0f, 0.0f };
 
-		glfwSetInputMode(GetWindow().GetNativeWindow(), GLFW_CURSOR,  GLFW_CURSOR_DISABLED);
+		OglFramebuffer::Params sceneBufferParams;
+		sceneBufferParams.DebugName = "Scene fb";
+
+		sceneBufferParams.ColorAttachmentParams.DebugName = "Scene fb color attachment";
+		sceneBufferParams.ColorAttachmentParams.Width = 720;
+		sceneBufferParams.ColorAttachmentParams.Height = 720 * 9 / 16;
+		sceneBufferParams.ColorAttachmentParams.Format = GraphicsFormat::R8G8B8A8_UNORM;
+		sceneBufferParams.ColorAttachmentParams.MipLevels = 1;
+		sceneBufferParams.ColorAttachmentMipMapIndex = 0;
+
+		sceneBufferParams.DepthAttachmentParams.DebugName = "Scene fb depth attachment";
+		sceneBufferParams.DepthAttachmentParams.Width = 720;
+		sceneBufferParams.DepthAttachmentParams.Height = 720 * 9 / 16;
+		sceneBufferParams.DepthAttachmentParams.Format = GraphicsFormat::D32_UNORM;
+		sceneBufferParams.DepthAttachmentParams.MipLevels = 1;
+		sceneBufferParams.DepthAttachmentMipMapIndex = 0;
+
+		mSceneBuffer = OglFramebuffer(std::move(sceneBufferParams));
 	}
 
 	void OnWindowResize(int32_t width, int32_t height) override
@@ -66,40 +85,47 @@ private:
 		Render();
 	}
 
-	void Render()
+	void ShowUserInterface()
 	{
-		Window& window = GetWindow();
-		float aspect = window.GetWidth() / float(window.GetHeight());
+		GetImGui().NewFrame();
 
-		glm::mat4 proj = glm::perspective(glm::radians(60.0f), aspect, 0.01f, 20.0f);
-		glm::mat4 view = mCam.LookAt(mCameraEntity.Translation);
-		glm::mat4 model = mModelEntity.CalculateMatrix();
-		glm::mat4 normalMatrix = glm::transpose(glm::inverse(model));
+		ImGui::Begin("Scene manager");
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, window.GetWidth(), window.GetHeight());
+		int state = glfwGetMouseButton(GetWindow().GetNativeWindow(), GLFW_MOUSE_BUTTON_LEFT);
+		if (ImGui::IsWindowHovered() && GLFW_PRESS == state)
+		{
+			mIsFocused = true;
+			glfwSetInputMode(GetWindow().GetNativeWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
 
-		mPrograms.BindToPipeline();
-		auto& vertexShader = mPrograms[ShaderStage::Vertex].Get();
-		vertexShader.SetUniform("uModelMtx", model);
-		vertexShader.SetUniform("uNormalMtx", normalMatrix);
-		vertexShader.SetUniform("uViewProjectionMtx", proj * view);
-
-		mModel.ForEachShape(
-			[](const Submesh& shape)
+		ImGui::Image(
+			GetImGui().GetTextureID(mSceneBuffer.GetColorAttachment()),
 			{
-				glEnable(GL_CULL_FACE);
-				glEnable(GL_DEPTH_TEST);
-				glCullFace(GL_BACK);
-				shape.GetGeometry().BindToPipeline();
-				glDrawArrays(GL_TRIANGLES, 0, shape.GetVertexCount());
-			}
+				float(mSceneBuffer.GetParams().ColorAttachmentParams.Width),
+				float(mSceneBuffer.GetParams().ColorAttachmentParams.Height),
+			},
+			{ 0, 1 },
+			{ 1, 0 }
 		);
 
-		window.Present();
+		ImGui::End();
+
+		ImGui::Render();
 	}
 
 	void OnUpdate(float dt) override
+	{
+		ShowUserInterface();
+
+		if (mIsFocused)
+		{
+			ProcessInput(dt);
+		}
+
+		Render();
+	}
+
+	void ProcessInput(float dt)
 	{
 		float speed = 2.0f * dt;
 		glm::vec3 movement(0.0f, 0.0f, 0.0f);
@@ -132,6 +158,11 @@ private:
 		{
 			movement.y -= 1.0f;
 		}
+		if (IsKeyDown(GLFW_KEY_ESCAPE))
+		{
+			mIsFocused = false;
+			glfwSetInputMode(GetWindow().GetNativeWindow(), GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+		}
 
 		if (glm::length(movement) > glm::epsilon<float>())
 		{
@@ -139,12 +170,58 @@ private:
 		}
 
 		mCameraEntity.Translation += movement * speed;
+	}
 
-		Render();
+	void Render()
+	{
+		mSceneBuffer.BindToPipeline();
+		const OglFramebuffer::Params& sceneBufferParams = mSceneBuffer.GetParams();
+
+		int32_t width = sceneBufferParams.ColorAttachmentParams.Width;
+		int32_t height = sceneBufferParams.ColorAttachmentParams.Height;
+
+		float aspect = width / float(height);
+
+		glm::mat4 proj = glm::perspective(glm::radians(60.0f), aspect, 0.01f, 20.0f);
+		glm::mat4 view = mCam.LookAt(mCameraEntity.Translation);
+		glm::mat4 model = mModelEntity.CalculateMatrix();
+		glm::mat4 normalMatrix = glm::transpose(glm::inverse(model));
+
+		mSceneBuffer.ClearColor({ 0.0f, 0.0f, 0.0f, 1 });
+		mSceneBuffer.ClearDepth(1.0f);
+		glViewport(0, 0, width, height);
+
+		mPrograms.BindToPipeline();
+		auto& vertexShader = mPrograms[ShaderStage::Vertex].Get();
+		vertexShader.SetUniform("uModelMtx", model);
+		vertexShader.SetUniform("uNormalMtx", normalMatrix);
+		vertexShader.SetUniform("uViewProjectionMtx", proj * view);
+
+		mModel.ForEachShape(
+			[](const Submesh& shape)
+			{
+				glEnable(GL_CULL_FACE);
+				glEnable(GL_DEPTH_TEST);
+				glCullFace(GL_BACK);
+				shape.GetGeometry().BindToPipeline();
+				glDrawArrays(GL_TRIANGLES, 0, shape.GetVertexCount());
+			}
+		);
+
+		OglFramebuffer::BindDefaultToPipeline();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GetImGui().RenderDrawData(ImGui::GetDrawData());
+
+		GetWindow().Present();
 	}
 
 	void OnMouseMove(float x, float y) override
 	{
+		if (!mIsFocused)
+		{
+			return;
+		}
+
 		constexpr float cSensitivity = 0.004f;
 
 		static float sX = x;
@@ -168,6 +245,11 @@ private:
 
 	ShaderLibrary mShaders;
 	OglProgramPipeline mPrograms;
+	OglFramebuffer mSceneBuffer;
+
+	DearImGui mImGui;
+
+	bool mIsFocused = false;
 };
 
 int main()
