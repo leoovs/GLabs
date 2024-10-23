@@ -243,8 +243,6 @@ private:
 	OglProgramPipeline mPrograms;
 	OglFramebuffer mSceneBuffer;
 
-	DearImGui mImGui;
-
 	bool mIsFocused = false;
 };
 
