@@ -1,5 +1,6 @@
 #version 460 core
 
+in vec3 worldPos;
 in vec3 normal;
 in vec2 uv;
 
@@ -10,6 +11,6 @@ layout (binding = 0) uniform sampler2D albedo;
 void main()
 {
     outColor = texture(albedo, uv);
-    outColor = vec4(1.0f, 0.0f, 1.0f, 1.0f);
+    outColor = vec4(normal, 1.0f);
 }
 

@@ -4,11 +4,13 @@
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include "glabs/graphics/ogl_texture2d.hpp"
 #include "glabs/pch.hpp"
+#include "glabs/rendering/camera2.hpp"
 #include "glabs/rendering/mesh.hpp"
 #include "glabs/rendering/obj_importer.hpp"
 #include "glabs/rendering/shader_library.hpp"
 #include "glabs/rendering/camera.hpp"
 
+#include <GLFW/glfw3.h>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
@@ -35,6 +37,11 @@ struct Entity
 class TestApp : public BasicApp
 {
 private:
+	std::string_view GetName() const override
+	{
+		return "O-o";
+	}
+
 	void OnStart() override
 	{
 		mModel = ObjImporter()
@@ -45,13 +52,14 @@ private:
 		mPrograms = OglProgramPipeline({ "shaders" });
 
 		mPrograms.SetProgram(mShaders[ShaderStage::Vertex]
-			.FetchFromFile("glsl/vert.glsl", "basic"));
+			.FetchFromFile("glsl/model_vert.glsl", "model"));
 		mPrograms.SetProgram(mShaders[ShaderStage::Fragment]
-			.FetchFromFile("glsl/frag.glsl", "basic"));
+			.FetchFromFile("glsl/model_frag.glsl", "model"));
 
-		mCam = Camera(glm::vec3(0.0f, 0.0f, 13.0f));
+		mModelEntity.Translation = { 0.0f, 0.0f, 0.0f };
+		mCameraEntity.Translation = { 0.0f, 0.0f, 0.0f };
 
-		glfwSetInputMode(GetWindow().GetNativeWindow(), GLFW_CURSOR_HIDDEN, GLFW_TRUE);
+		glfwSetInputMode(GetWindow().GetNativeWindow(), GLFW_CURSOR,  GLFW_CURSOR_DISABLED);
 	}
 
 	void OnWindowResize(int32_t width, int32_t height) override
@@ -65,20 +73,26 @@ private:
 		float aspect = window.GetWidth() / float(window.GetHeight());
 
 		glm::mat4 proj = glm::perspective(glm::radians(60.0f), aspect, 0.01f, 20.0f);
-		glm::mat4 view = mCam.GetLookAt();
+		glm::mat4 view = mCam.LookAt(mCameraEntity.Translation);
+		glm::mat4 model = mModelEntity.CalculateMatrix();
+		glm::mat4 normalMatrix = glm::transpose(glm::inverse(model));
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, window.GetWidth(), window.GetHeight());
 
 		mPrograms.BindToPipeline();
-
-		mPrograms[ShaderStage::Vertex].Get().SetUniform("uMVP", proj * view * mEntity.CalculateMatrix());
+		auto& vertexShader = mPrograms[ShaderStage::Vertex].Get();
+		vertexShader.SetUniform("uModelMtx", model);
+		vertexShader.SetUniform("uNormalMtx", normalMatrix);
+		vertexShader.SetUniform("uViewProjectionMtx", proj * view);
 
 		mModel.ForEachShape(
 			[](const Submesh& shape)
 			{
+				glEnable(GL_CULL_FACE);
+				glEnable(GL_DEPTH_TEST);
+				glCullFace(GL_BACK);
 				shape.GetGeometry().BindToPipeline();
-				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 				glDrawArrays(GL_TRIANGLES, 0, shape.GetVertexCount());
 			}
 		);
@@ -88,44 +102,70 @@ private:
 
 	void OnUpdate(float dt) override
 	{
-		float speed = 2.0f;
+		float speed = 2.0f * dt;
+		glm::vec3 movement(0.0f, 0.0f, 0.0f);
+
 		if (IsKeyDown(GLFW_KEY_D))
 		{
-			glm::vec3 right(speed, 0.0f, 0.0f);
-			mCam.Move(right * dt);
+			movement += mCam.GetRight();
+			movement.y = 0.0f;
 		}
 		if (IsKeyDown(GLFW_KEY_A))
 		{
-			glm::vec3 left(-speed, 0.0f, 0.0f);
-			mCam.Move(left * dt);
+			movement -= mCam.GetRight();
+			movement.y = 0.0f;
 		}
 		if (IsKeyDown(GLFW_KEY_W))
 		{
-			glm::vec3 forward(0.0f, 0.0f, -speed);
-			mCam.Move(forward * dt);
+			movement += mCam.GetFront();
+			movement.y = 0.0f;
 		}
 		if (IsKeyDown(GLFW_KEY_S))
 		{
-			glm::vec3 forward(0.0f, 0.0f, speed);
-			mCam.Move(forward * dt);
+			movement -= mCam.GetFront();
+			movement.y = 0.0f;
 		}
 		if (IsKeyDown(GLFW_KEY_SPACE))
 		{
-			glm::vec3 up(0.0f, speed, 0.0f);
-			mCam.Move(up * dt);
+			movement.y += 1.0f;
 		}
 		if (IsKeyDown(GLFW_KEY_LEFT_SHIFT))
 		{
-			glm::vec3 down(0.0f, -speed, 0.0f);
-			mCam.Move(down * dt);
+			movement.y -= 1.0f;
 		}
+
+		if (glm::length(movement) > glm::epsilon<float>())
+		{
+			movement = glm::normalize(movement);
+		}
+
+		mCameraEntity.Translation += movement * speed;
 
 		Render();
 	}
 
+	void OnMouseMove(float x, float y) override
+	{
+		constexpr float cSensitivity = 0.004f;
+
+		static float sX = x;
+		static float sY = y;
+
+		float dx = x - sX;
+		float dy = y - sY;
+
+		sX = x;
+		sY = y;
+
+		mCam.Rotate(glm::vec3(-dy, -dx, 0.0f) * cSensitivity);
+
+		const glm::vec3& rotation = mCam.GetRotation();
+	}
+
 	Mesh mModel;
-	Entity mEntity;
-	Camera mCam;
+	Entity mModelEntity{};
+	Camera2 mCam;
+	Entity mCameraEntity{};
 
 	ShaderLibrary mShaders;
 	OglProgramPipeline mPrograms;
