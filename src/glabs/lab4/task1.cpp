@@ -40,12 +40,12 @@ namespace glabs
 
 	TaskName Task1::GetNext() const
 	{
-		return TaskName::None;
+		return TaskName::Task3;
 	}
 
 	TaskName Task1::GetPrev() const
 	{
-		return TaskName::None;
+		return TaskName::Task3;
 	}
 
 	void Task1::SetupShapes()

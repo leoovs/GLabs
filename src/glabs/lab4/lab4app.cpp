@@ -1,5 +1,6 @@
 #include "glabs/lab4/lab4app.hpp"
 #include "glabs/lab4/task1.hpp"
+#include "glabs/lab4/task3.hpp"
 
 namespace glabs
 {
@@ -24,6 +25,8 @@ namespace glabs
 
 	void Lab4App::OnUpdate(float dt)
 	{
+		PeekTask();
+
 		if (Task* currentTask = GetCurrentTask())
 		{
 			currentTask->OnUpdate(dt);
@@ -51,12 +54,14 @@ namespace glabs
 				{
 					PushTask(prev);
 				}
+				ImGui::SameLine();
 			}
 
 			ImGui::Text("%s", TaskNameToStr(currentTask->GetName()).data());
 
 			if (TaskName next = currentTask->GetNext(); next != TaskName::None)
 			{
+				ImGui::SameLine();
 				if (ImGui::Button("След."))
 				{
 					PushTask(next);
@@ -86,6 +91,7 @@ namespace glabs
 	void Lab4App::SetupTasks()
 	{
 		mTasks.at(+TaskName::Task1) = std::make_unique<Task1>();
+		mTasks.at(+TaskName::Task3) = std::make_unique<Task3>();
 
 		mAwaitedTasks.push(TaskName::Task1);
 	}

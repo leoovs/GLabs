@@ -8,6 +8,7 @@ namespace glabs
 	{
 		None = -1,
 		Task1,
+		Task3,
 
 		Count_,
 	};
@@ -23,6 +24,8 @@ namespace glabs
 		{
 		case TaskName::Task1:
 			return "Задание 1, 2";
+		case TaskName::Task3:
+			return "Задание 3, 4, 5, 6";
 		default:
 			return "???";
 		}
