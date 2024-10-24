@@ -1,10 +1,25 @@
 #include "glabs/lab4/lab4app.hpp"
+#include "glabs/lab4/task1.hpp"
 
 namespace glabs
 {
 	std::string_view Lab4App::GetName() const
 	{
 		return "lab4";
+	}
+
+	void Lab4App::OnStart()
+	{
+		SetupTasks();
+
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.Fonts->AddFontFromFileTTF(
+			"C:/Windows/Fonts/Tahoma.ttf",
+			20,
+			nullptr,
+			io.Fonts->GetGlyphRangesCyrillic()
+		);
 	}
 
 	void Lab4App::OnUpdate(float dt)
@@ -66,6 +81,13 @@ namespace glabs
 
 		GetImGui().RenderDrawData(ImGui::GetDrawData());
 		GetWindow().Present();
+	}
+
+	void Lab4App::SetupTasks()
+	{
+		mTasks.at(+TaskName::Task1) = std::make_unique<Task1>();
+
+		mAwaitedTasks.push(TaskName::Task1);
 	}
 
 	void Lab4App::PushTask(TaskName task)

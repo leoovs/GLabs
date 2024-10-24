@@ -10,12 +10,14 @@ namespace glabs
 	private:
 		std::string_view GetName() const override;
 
+		void OnStart() override;
 		void OnUpdate(float dt) override;
 		void OnWindowResize(int32_t width, int32_t height) override;
 
 		void ShowUI();
 		void Render();
 
+		void SetupTasks();
 		void PushTask(TaskName task);
 		void PeekTask();
 		Task* GetCurrentTask() const;

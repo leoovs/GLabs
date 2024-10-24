@@ -22,7 +22,7 @@ namespace glabs
 		switch (task)
 		{
 		case TaskName::Task1:
-			return "Задание 1";
+			return "Задание 1, 2";
 		default:
 			return "???";
 		}
