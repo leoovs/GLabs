@@ -9,6 +9,8 @@
 
 namespace glabs
 {
+	class Lab4App;
+
 	class Task3 : public Task
 	{
 	public:
@@ -28,15 +30,16 @@ namespace glabs
 				return "Параллельная";
 			case Projection::Perspective:
 				return "Перспективная";
+			default:
+				return "???";
 			}
-
-			return "???";
 		}
 
-		Task3();
+		Task3(Lab4App* app);
 		~Task3() override = default;
 
 		void OnUI() override;
+		void OnUpdate(float dt) override;
 		void OnRender() override;
 
 		TaskName GetName() const override;
@@ -47,6 +50,8 @@ namespace glabs
 		void SetupProjections();
 		void SetupCube();
 		void LoadShaders();
+
+		Lab4App* mApp = nullptr;
 
 		Projection mProjection = Projection::Ortho;
 		bool mCubeWireframe = false;

@@ -1,4 +1,5 @@
 #include "glabs/lab4/task3.hpp"
+#include "glabs/lab4/lab4app.hpp"
 #include "glabs/graphics/ogl_geometry_input.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include <glm/ext/matrix_clip_space.hpp>
@@ -6,7 +7,8 @@
 
 namespace glabs
 {
-	Task3::Task3()
+	Task3::Task3(Lab4App* app)
+		: mApp(app)
 	{
 		SetupCube();
 		SetupProjections();
@@ -46,9 +48,18 @@ namespace glabs
 		ImGui::DragFloat3("Поворот", glm::value_ptr(mCubeRotation), 0.05f, 0.0f, glm::two_pi<float>(), "%.1f", ImGuiSliderFlags_WrapAround);
 	}
 
+	void Task3::OnUpdate(float dt)
+	{
+		mCubeRotation.z = mApp->IsKeyDown(GLFW_KEY_R)
+			? glm::radians(45.0f)
+			: 0.0f;
+	}
+
 	void Task3::OnRender()
 	{
 		glEnable(GL_DEPTH_TEST);
+		glClearDepth(1.0f);
+		glDepthFunc(GL_LESS);
 
 		mModel = glm::translate(glm::mat4(1.0f), mCubeTranslation);
 		mModel = glm::rotate(mModel, mCubeRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -101,7 +112,7 @@ namespace glabs
 		mPerspectiveProjection = glm::perspective(
 			glm::radians(45.0f),
 			float(viewport[2]) / viewport[3],
-			0.01f, 15.0f
+			0.01f, 12.0f
 		);
 	}
 

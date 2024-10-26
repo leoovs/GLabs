@@ -30,7 +30,7 @@ namespace glabs
 		glDrawArrays(GL_TRIANGLES, 3, 6);
 
 		mPrograms[ShaderStage::Fragment].Get().SetUniform("uColor", 0.0f, 0.0f, 1.0f);
-		glDrawArrays(GL_TRIANGLES, 7, 3);
+		glDrawArrays(GL_TRIANGLES, 9, 3);
 	}
 
 	TaskName Task1::GetName() const
@@ -75,7 +75,7 @@ namespace glabs
 			"Shape vertex buffer",
 			GL_ARRAY_BUFFER,
 			sizeof(float[3]),
-			10
+			12
 		});
 		mShapeVertexBuffer.SetData(shapeVertices);
 

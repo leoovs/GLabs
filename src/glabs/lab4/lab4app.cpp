@@ -91,7 +91,7 @@ namespace glabs
 	void Lab4App::SetupTasks()
 	{
 		mTasks.at(+TaskName::Task1) = std::make_unique<Task1>();
-		mTasks.at(+TaskName::Task3) = std::make_unique<Task3>();
+		mTasks.at(+TaskName::Task3) = std::make_unique<Task3>(this);
 
 		mAwaitedTasks.push(TaskName::Task1);
 	}

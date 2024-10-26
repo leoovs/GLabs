@@ -7,6 +7,9 @@ namespace glabs
 {
 	class Lab4App : public BasicApp
 	{
+	public:
+		using BasicApp::IsKeyDown;
+
 	private:
 		std::string_view GetName() const override;
 
