@@ -25,7 +25,7 @@ namespace glabs
 
 		Camera mCamera;
 		float mAzimuth = 0.0f;
-		float mElevation = glm::half_pi<float>() / 2.0f;
+		float mZenith = glm::half_pi<float>() / 2.0f;
 		Entity mCart;
 		OglProgramPipeline mCartShaders;
 		ShaderLibrary mShaders;

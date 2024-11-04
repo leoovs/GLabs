@@ -53,7 +53,7 @@ namespace glabs
 		GetImGui().NewFrame();
 
 		ImGui::Begin("A Window");
-		ImGui::Text("Elevation: %.3f (%.3f)", mElevation, glm::degrees(mElevation));
+		ImGui::Text("Elevation: %.3f (%.3f)", mZenith, glm::degrees(mZenith));
 		ImGui::DragFloat3("Position", glm::value_ptr(mCart.Translation), 0.5f, -10.0f, 10.0f);
 		ImGui::End();
 
@@ -118,15 +118,15 @@ namespace glabs
 		float speed = 0.01f;
 
 		mAzimuth -= dx * speed;
-		mElevation += dy * speed;
+		mZenith += dy * speed;
 
-		mElevation = std::clamp(mElevation, 0.1f, glm::pi<float>() - 0.1f);
+		mZenith = std::clamp(mZenith, 0.1f, glm::pi<float>() - 0.1f);
 
 		glm::vec3 position
 		{
-			radius * glm::sin(mElevation) * glm::cos(mAzimuth),
-			radius * glm::cos(mElevation),
-			radius * glm::sin(mElevation) * glm::sin(mAzimuth)
+			radius * glm::sin(mZenith) * glm::cos(mAzimuth),
+			radius * glm::cos(mZenith),
+			radius * glm::sin(mZenith) * glm::sin(mAzimuth)
 		};
 
 		mCamera.SetEyePosition(position);
