@@ -8,19 +8,23 @@ namespace glabs
 	class OglFramebuffer
 	{
 	public:
-		struct Params
+		enum class Attachment
 		{
-			std::string DebugName = "Unnamed Framebuffer";
+			Color,
+			DepthStencil,
 
-			OglTexture2D::Params ColorAttachmentParams{ "Unnamed Framebuffer color attachment" };
-			OglTexture2D::Params DepthAttachmentParams{ "Unnamed Framebuffer depth attachment" };
-			size_t ColorAttachmentMipMapIndex = 0;
-			size_t DepthAttachmentMipMapIndex = 0;
+			Count_,
 		};
 
-		static void BindDefaultToPipeline();
+		struct Params
+		{
+			std::string DebugName = "Unnamed OglFramebuffer";
+		};
 
-		OglFramebuffer();
+		static constexpr size_t cColorAttachmentCount = 8;
+		static constexpr size_t cDepthStencilAttachmentCount = 1;
+
+		OglFramebuffer() = default;
 
 		OglFramebuffer(Params params);
 
@@ -33,8 +37,13 @@ namespace glabs
 		const Params& GetParams() const;
 		GLuint GetNativeFramebuffer() const;
 
-		const OglTexture2D& GetColorAttachment() const;
-		const OglTexture2D& GetDepthAttachment() const;
+		void SetAttachment(
+			Attachment attachmentName,
+			OglTexture2D& texture,
+			size_t mipLevelIndex = 0
+		);
+		void RemoveAttachment(Attachment attachmentName);
+		OglTexture2D& GetAttachment(Attachment attachmentName) const;
 
 		void BindToPipeline();
 
@@ -42,18 +51,15 @@ namespace glabs
 		void ClearDepth(float depth);
 
 	private:
-		void QueryParamsFromDefaultNativeFramebuffer();
+		static GLenum AttachmentToNativeAttachment(Attachment attachment);
 
 		void CreateNativeFramebuffer();
 		void DestroyNativeFramebuffer();
 
-		void AssignNativeFramebufferAttachments();
-
 		Params mParams;
-
 		GLuint mNativeFramebuffer = 0;
-		OglTexture2D mColorAttachment;
-		OglTexture2D mDepthAttachment;
+		std::array<OglTexture2D*, size_t(Attachment::Count_)> mAttachments = {};
+		std::array<size_t, size_t(Attachment::Count_)> mAttachmentMipMapIndices = {};
 	};
 }
 

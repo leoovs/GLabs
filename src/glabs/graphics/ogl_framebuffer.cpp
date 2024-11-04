@@ -1,33 +1,20 @@
 #include "glabs/graphics/ogl_framebuffer.hpp"
+
 #include <glm/gtc/type_ptr.hpp>
 
 namespace glabs
 {
-	void OglFramebuffer::BindDefaultToPipeline()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
-	OglFramebuffer::OglFramebuffer()
-	{
-		QueryParamsFromDefaultNativeFramebuffer();
-	}
-
 	OglFramebuffer::OglFramebuffer(Params params)
 		: mParams(std::move(params))
 	{
 		CreateNativeFramebuffer();
-		AssignNativeFramebufferAttachments();
 	}
 
 	OglFramebuffer::OglFramebuffer(OglFramebuffer&& other) noexcept
 		: mParams(std::move(other.mParams))
 		, mNativeFramebuffer(std::exchange(other.mNativeFramebuffer, 0))
-		, mColorAttachment(std::move(other.mColorAttachment))
-		, mDepthAttachment(std::move(other.mDepthAttachment))
-	{
-		other.QueryParamsFromDefaultNativeFramebuffer();
-	}
+		, mAttachments(std::exchange(other.mAttachments, {}))
+	{}
 
 	OglFramebuffer& OglFramebuffer::operator=(OglFramebuffer&& other) noexcept
 	{
@@ -39,9 +26,7 @@ namespace glabs
 		DestroyNativeFramebuffer();
 		mParams = std::move(other.mParams);
 		mNativeFramebuffer = std::exchange(other.mNativeFramebuffer, 0);
-		mColorAttachment = std::move(other.mColorAttachment);
-		mDepthAttachment = std::move(other.mDepthAttachment);
-		other.QueryParamsFromDefaultNativeFramebuffer();
+		mAttachments = std::exchange(other.mAttachments, {});
 
 		return *this;
 	}
@@ -61,38 +46,84 @@ namespace glabs
 		return mNativeFramebuffer;
 	}
 
-	const OglTexture2D& OglFramebuffer::GetColorAttachment() const
+	void OglFramebuffer::SetAttachment(
+		Attachment attachmentName,
+		OglTexture2D& texture,
+		size_t mipLevelIndex
+	)
 	{
-		return mColorAttachment;
+		assert(0 != mNativeFramebuffer);
+
+		auto iAttachment = static_cast<size_t>(attachmentName);
+
+		// TODO: replace with glNamedFramebufferTextureLayer to support cube maps.
+		glNamedFramebufferTexture(
+			mNativeFramebuffer,
+			AttachmentToNativeAttachment(attachmentName),
+			(mAttachments.at(iAttachment) = &texture)->GetNativeTexture2D(),
+			mAttachmentMipMapIndices.at(iAttachment) = mipLevelIndex
+		);
 	}
 
-	const OglTexture2D& OglFramebuffer::GetDepthAttachment() const
+	void OglFramebuffer::RemoveAttachment(Attachment attachmentName)
 	{
-		return mDepthAttachment;
+		assert(0 != mNativeFramebuffer);
+
+		auto iAttachment = static_cast<size_t>(attachmentName);
+
+		mAttachments.at(iAttachment) = nullptr;
+		mAttachmentMipMapIndices.at(iAttachment) = 0;
+
+		glNamedFramebufferTexture(
+			mNativeFramebuffer,
+			AttachmentToNativeAttachment(attachmentName),
+			0,
+			0
+		);
+	}
+
+	OglTexture2D& OglFramebuffer::GetAttachment(Attachment attachmentName) const
+	{
+		assert(0 != mNativeFramebuffer);
+
+		auto iAttachment = static_cast<size_t>(attachmentName);
+		OglTexture2D* attachment = mAttachments.at(iAttachment);
+
+		assert(nullptr != attachment);
+
+		return *attachment;
 	}
 
 	void OglFramebuffer::BindToPipeline()
 	{
+		assert(0 != mNativeFramebuffer);
 		// TODO: should we explicitly provide target instead of hardcoding it?
 		glBindFramebuffer(GL_FRAMEBUFFER, mNativeFramebuffer);
 	}
 
 	void OglFramebuffer::ClearColor(glm::vec4 color)
 	{
+		assert(0 != mNativeFramebuffer);
 		glClearNamedFramebufferfv(mNativeFramebuffer, GL_COLOR, 0, glm::value_ptr(color));
 	}
 
 	void OglFramebuffer::ClearDepth(float depth)
 	{
+		assert(0 != mNativeFramebuffer);
 		glClearNamedFramebufferfv(mNativeFramebuffer, GL_DEPTH, 0, &depth);
 	}
 
-	void OglFramebuffer::QueryParamsFromDefaultNativeFramebuffer()
+	GLenum OglFramebuffer::AttachmentToNativeAttachment(Attachment attachment)
 	{
-		// FIXME: probably not going to play well with default framebuffer...
-
-		mColorAttachment = OglTexture2D();
-		mDepthAttachment = OglTexture2D();
+		switch (attachment)
+		{
+		case Attachment::Color:
+			return GL_COLOR_ATTACHMENT0;
+		case Attachment::DepthStencil:
+			return GL_DEPTH_STENCIL_ATTACHMENT;
+		default:
+			return GL_FALSE;
+		}
 	}
 
 	void OglFramebuffer::CreateNativeFramebuffer()
@@ -111,26 +142,6 @@ namespace glabs
 	{
 		glDeleteFramebuffers(1, &mNativeFramebuffer);
 		mNativeFramebuffer = 0;
-	}
-
-	void OglFramebuffer::AssignNativeFramebufferAttachments()
-	{
-		mColorAttachment = OglTexture2D(mParams.ColorAttachmentParams);
-		mDepthAttachment = OglTexture2D(mParams.DepthAttachmentParams);
-
-		glNamedFramebufferTexture(
-			mNativeFramebuffer,
-			GL_COLOR_ATTACHMENT0,
-			mColorAttachment.GetNativeTexture2D(),
-			mParams.ColorAttachmentMipMapIndex
-		);
-
-		glNamedFramebufferTexture(
-			mNativeFramebuffer,
-			GL_DEPTH_ATTACHMENT,
-			mDepthAttachment.GetNativeTexture2D(),
-			mParams.DepthAttachmentMipMapIndex
-		);
 	}
 }
 

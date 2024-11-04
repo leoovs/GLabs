@@ -84,3 +84,9 @@ add_custom_command(
 	${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/glsl" $<TARGET_FILE_DIR:glabs>/glsl
 )
 
+add_custom_command(
+	TARGET glabs
+	POST_BUILD COMMAND
+	${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/models" $<TARGET_FILE_DIR:glabs>/models
+)
+
