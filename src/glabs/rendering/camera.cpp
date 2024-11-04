@@ -1,11 +1,12 @@
 #include "glabs/rendering/camera.hpp"
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 namespace glabs
 {
-	glm::mat4 Camera::LookAt(const glm::vec3& eyePosition) const
+	glm::mat4 Camera::CalculateLookAt() const
 	{
-		return glm::lookAt(eyePosition, eyePosition + mFront, mUp);
+		return glm::lookAt(mEyePosition, mEyePosition + mFront, mUp);
 	}
 
 	void Camera::Rotate(const glm::vec3& rotation)
@@ -20,9 +21,37 @@ namespace glabs
 		UpdateVectors();
 	}
 
+	void Camera::LookAt(const glm::vec3& eyeTarget)
+	{
+		glm::vec3 direction = mEyePosition - eyeTarget;
+
+		direction = glm::normalize(direction);
+
+		mRotation.y = std::atan2(direction.x, direction.z);
+		mRotation.x = -std::asin(direction.y);
+
+		WrapRotation();
+		UpdateVectors();
+	}
+
+	void Camera::Move(const glm::vec3& movement)
+	{
+		SetEyePosition(mEyePosition + movement);
+	}
+
+	void Camera::SetEyePosition(const glm::vec3& position)
+	{
+		mEyePosition = position;
+	}
+
 	const glm::vec3& Camera::GetRotation() const
 	{
 		return mRotation;
+	}
+
+	const glm::vec3& Camera::GetEyePosition() const
+	{
+		return mEyePosition;
 	}
 
 	const glm::vec3& Camera::GetFront() const
@@ -52,10 +81,6 @@ namespace glabs
 
 	void Camera::UpdateVectors()
 	{
-		// mFront.x = glm::cos(mRotation.x) * glm::cos(mRotation.y);
-		// mFront.y = glm::cos(mRotation.y);
-		// mFront.z = glm::sin(mRotation.x) * glm::cos(mRotation.y);
-
 		auto rotation = glm::rotate(glm::mat4(1.0f), mRotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 		rotation = glm::rotate(rotation, mRotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 		rotation = glm::rotate(rotation, mRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));

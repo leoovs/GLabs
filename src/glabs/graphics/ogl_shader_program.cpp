@@ -115,6 +115,11 @@ namespace glabs
 		);
 	}
 
+	void OglShaderProgram::SetUniform(const std::string& name, const glm::vec3& value)
+	{
+		SetUniform(name, value.x, value.y, value.z);
+	}
+
 	void OglShaderProgram::SetUniform(
 		const std::string& name,
 		const glm::mat4& value,

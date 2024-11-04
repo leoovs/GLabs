@@ -36,6 +36,8 @@ target_sources(
 	"src/glabs/graphics/ogl_texture2d.cpp"
 	"src/glabs/graphics/window.cpp"
 
+	"src/glabs/lab5/lab5app.cpp"
+
 	"src/glabs/rendering/camera.cpp"
 	"src/glabs/rendering/dear_imgui.cpp"
 	"src/glabs/rendering/frame_timer.cpp"
@@ -69,6 +71,12 @@ target_link_libraries(
 	stb
 	glm::glm
 	tinyobjloader
+)
+
+target_compile_definitions(
+	glabs
+	PRIVATE
+	GLM_ENABLE_EXPERIMENTAL
 )
 
 set_target_properties(
