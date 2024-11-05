@@ -13,6 +13,7 @@ namespace glabs
 		virtual void OnWindowClose();
 		virtual void OnWindowResize(int32_t width, int32_t height) {}
 		virtual void OnMouseMove(float x, float y) {}
+		virtual void OnMouseScroll(float xoffset, float yoffset) {}
 		virtual void OnStart() {}
 		virtual void OnUpdate(float dt) {}
 		virtual void OnQuit() {}

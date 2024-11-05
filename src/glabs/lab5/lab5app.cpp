@@ -25,6 +25,9 @@ namespace glabs
 
 	void Lab5App::OnUpdate(float dt)
 	{
+		UpdateCamera();
+		// HandleInput(dt);
+
 		ShowMenu();
 		Render();
 	}
@@ -48,13 +51,19 @@ namespace glabs
 		RotateCamera(dx, dy);
 	}
 
+	void Lab5App::OnMouseScroll(float xoffset, float yoffset)
+	{
+		mRadius -= yoffset;
+		mRadius = std::clamp(mRadius, 1.0f, 15.0f);
+	}
+
 	void Lab5App::ShowMenu()
 	{
 		GetImGui().NewFrame();
 
 		ImGui::Begin("A Window");
-		ImGui::Text("Elevation: %.3f (%.3f)", mZenith, glm::degrees(mZenith));
-		ImGui::DragFloat3("Position", glm::value_ptr(mCart.Translation), 0.5f, -10.0f, 10.0f);
+		ImGui::DragFloat3("XYZ", glm::value_ptr(mCart.Translation), 0.5f, -10.0f, 10.0f);
+		ImGui::DragFloat3("PYR", glm::value_ptr(mCart.Rotation), 0.5f, 0.0f, glm::two_pi<float>(), "%.3f", ImGuiSliderFlags_WrapAround);
 		ImGui::End();
 
 		ImGui::Render();
@@ -114,23 +123,27 @@ namespace glabs
 			return;
 		}
 
-		float radius = 5.0f;
 		float speed = 0.01f;
 
 		mAzimuth -= dx * speed;
 		mZenith += dy * speed;
 
 		mZenith = std::clamp(mZenith, 0.1f, glm::pi<float>() - 0.1f);
+	}
 
+	void Lab5App::UpdateCamera()
+	{
 		glm::vec3 position
 		{
-			radius * glm::sin(mZenith) * glm::cos(mAzimuth),
-			radius * glm::cos(mZenith),
-			radius * glm::sin(mZenith) * glm::sin(mAzimuth)
+			mRadius * glm::sin(mZenith) * glm::cos(mAzimuth),
+			mRadius * glm::cos(mZenith),
+			mRadius * glm::sin(mZenith) * glm::sin(mAzimuth)
 		};
 
+		position.y += 2.0f;
+
 		mCamera.SetEyePosition(position);
-		mCamera.LookAt({ 0.0f, 0.0f, 0.0f });
+		mCamera.LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
 	}
 
 	void Lab5App::Render()
@@ -140,11 +153,12 @@ namespace glabs
 		Window& window = GetWindow();
 		DearImGui& imgui = GetImGui();
 
-		float aspect = window.GetWidth() / float(window.GetHeight());
+		auto [width, height] = window.GetSize();
+		float aspect = width / float(height);
 
 		glm::mat4 model = mCart.CalculcateModelMatrix();
 		glm::mat4 view = mCamera.CalculateLookAt();
-		glm::mat4 projection = glm::perspective(45.0f, aspect, 0.01f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 6.0f, 12.0f);
 
 		mCartShaders[ShaderStage::Vertex].Get().SetUniform("uInvTranspM", glm::transpose(glm::inverse(model)));
 		mCartShaders[ShaderStage::Vertex].Get().SetUniform("uMVP", projection * view * model);

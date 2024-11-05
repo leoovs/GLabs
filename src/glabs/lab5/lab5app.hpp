@@ -15,17 +15,22 @@ namespace glabs
 		void OnStart() override;
 		void OnUpdate(float dt) override;
 		void OnMouseMove(float x, float y) override;
+		void OnMouseScroll(float xoffset, float yoffset) override;
 
 		void ShowMenu();
 		void HandleInput(float dt);
 		void RotateCamera(float dx, float dy);
+		void UpdateCamera();
 		void Render();
 
 		void LoadShaders();
 
 		Camera mCamera;
+		float mDx = 0.0f;
+		float mDy = 0.0f;
 		float mAzimuth = 0.0f;
 		float mZenith = glm::half_pi<float>() / 2.0f;
+		float mRadius = 1.0f;
 		Entity mCart;
 		OglProgramPipeline mCartShaders;
 		ShaderLibrary mShaders;

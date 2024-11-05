@@ -10,6 +10,7 @@ namespace glabs
 		using CloseCallback = void();
 		using SizeCallback = void(int32_t, int32_t);
 		using MouseMoveCallback = void(float, float);
+		using MouseScrollCallback = void(float, float);
 
 		Window() = default;
 		Window(int32_t width, int32_t height, std::string_view title);
@@ -22,11 +23,13 @@ namespace glabs
 
 		int32_t GetWidth() const;
 		int32_t GetHeight() const;
+		std::pair<int32_t, int32_t> GetSize() const;
 		GLFWwindow* GetNativeWindow() const;
 
 		void SetCloseCallback(std::function<CloseCallback> callback);
 		void SetSizeCallback(std::function<SizeCallback> callback);
 		void SetMouseMoveCallback(std::function<MouseMoveCallback> callback);
+		void SetMouseScrollCallback(std::function<MouseScrollCallback> callback);
 
 		void PollEvents();
 		void Present();
@@ -47,6 +50,7 @@ namespace glabs
 		std::function<CloseCallback> mCloseCallback;
 		std::function<SizeCallback> mSizeCallback;
 		std::function<MouseMoveCallback> mMouseMoveCallback;
+		std::function<MouseScrollCallback> mMouseScrollCallback;
 	};
 }
 

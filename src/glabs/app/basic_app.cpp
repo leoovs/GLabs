@@ -103,6 +103,13 @@ namespace glabs
 				OnMouseMove(x, y);
 			}
 		);
+
+		window.SetMouseScrollCallback(
+			[this](float xoffset, float yoffset)
+			{
+				OnMouseScroll(xoffset, yoffset);
+			}
+		);
 	}
 
 	void BasicApp::SetupOglDebugCallback()
