@@ -135,6 +135,36 @@ namespace glabs
 		);
 	}
 
+	void OglShaderProgram::SetUniform(const std::string& name, const std::vector<int>& value)
+	{
+		glProgramUniform1iv(
+			mNativeShaderProgram,
+			mUniformLocationCache.GetUniformLocation(name),
+			value.size(),
+			value.data()
+		);
+	}
+
+	void OglShaderProgram::SetUniform(const std::string& name, const std::vector<float>& value)
+	{
+		glProgramUniform1fv(
+			mNativeShaderProgram,
+			mUniformLocationCache.GetUniformLocation(name),
+			value.size(),
+			value.data()
+		);
+	}
+
+	void OglShaderProgram::SetUniform(const std::string& name, const std::vector<glm::vec3>& value)
+	{
+		glProgramUniform3fv(
+			mNativeShaderProgram,
+			mUniformLocationCache.GetUniformLocation(name),
+			value.size(),
+			glm::value_ptr(value.front())
+		);
+	}
+
 	const OglShaderProgram::Params& OglShaderProgram::GetParams() const
 	{
 		return mParams;

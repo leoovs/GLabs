@@ -1,6 +1,6 @@
 #include "glabs/app/app_container.hpp"
+#include "glabs/lab6/lab6app.hpp"
 #include "glabs/graphics/glfw_life.hpp"
-#include "glabs/lab5/lab5app.hpp"
 
 int main()
 {
@@ -12,7 +12,7 @@ int main()
 	glabs::GlfwLife glfw(std::move(glfwParams));
 	{
 		glabs::AppContainer()
-			.Bind<glabs::Lab5App>()
+			.Bind<glabs::Lab6App>()
 			.Configure()
 			.Run();
 	}

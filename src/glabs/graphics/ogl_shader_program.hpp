@@ -78,6 +78,9 @@ namespace glabs
 		void SetUniform(const std::string& name, float x1, float x2, float x3);
 		void SetUniform(const std::string& name, const glm::vec3& value);
 		void SetUniform(const std::string& name, const glm::mat4& value, bool transpose = false);
+		void SetUniform(const std::string& name, const std::vector<int>& value);
+		void SetUniform(const std::string& name, const std::vector<float>& value);
+		void SetUniform(const std::string& name, const std::vector<glm::vec3>& value);
 
 		const Params& GetParams() const;
 		GLuint GetNativeShaderProgram() const;
