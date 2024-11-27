@@ -19,16 +19,25 @@ namespace glabs
 		void OnWindowResize(int32_t width, int32_t height) override;
 
 		void ShowMenu();
+		void ShowMenu_Lights();
+		void ShowMenu_Model();
+
 		void Render();
 		void HandleInput(float dt);
+		void AnimateSpheres(float dt);
+		void PlaceSpheres();
+		void PlaceLights();
+		void AssignMaterials();
 
 		void LoadModel();
 		void LoadShaders();
 
-		Mesh mStormtrooper;
-		Mesh mSphere;
-		glm::mat4 mStormtrooperTranslation;
-		glm::mat4 mSphereTranslation;
+		static constexpr size_t cMaxModels = 2;
+		Mesh mSpheres[cMaxModels];
+		ForwardRenderer::Material mSphereMaterials[cMaxModels];
+		glm::vec3 mSphereTranslations[cMaxModels];
+		glm::vec3 mSphereScales[cMaxModels]{ glm::vec3(1.0f), glm::vec3(1.0f) };
+		bool mShowSphere[cMaxModels];
 
 		glm::mat4 mProjection;
 		Camera mCamera;
@@ -43,6 +52,10 @@ namespace glabs
 		float mLastY = 0.0f;
 		bool mFirstFocus = true;
 		bool mCaptureScene = false;
+
+		bool mAnimateSpheres[cMaxModels]{};
+		float mSphereThetas[cMaxModels]{};
+		float mAnimationSpeed[cMaxModels]{ 0.6f, 0.25f };
 	};
 }
 

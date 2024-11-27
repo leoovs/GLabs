@@ -9,22 +9,29 @@ namespace glabs
 		AllocateLights();
 	}
 
-	PointLight ForwardRenderer::GetPointLight(size_t lightIndex)
+	Light ForwardRenderer::GetLight(size_t lightIndex)
 	{
-		return PointLight
+		return Light
 		{
+			mLightKinds.at(lightIndex),
 			mLightCasts.at(lightIndex),
+
 			mLightPositions.at(lightIndex),
+			mLightDirections.at(lightIndex),
+
+			mLightCutOff.at(lightIndex),
+			mLightOuterCutOff.at(lightIndex),
 			mLightConstant.at(lightIndex),
 			mLightLinear.at(lightIndex),
 			mLightQuadratic.at(lightIndex),
+
 			mLightAmbient.at(lightIndex),
 			mLightDiffuse.at(lightIndex),
 			mLightSpecular.at(lightIndex),
 		};
 	}
 
-	size_t ForwardRenderer::GetPointLightCount() const
+	size_t ForwardRenderer::GetLightCount() const
 	{
 		return mParams.LightCount;
 	}
@@ -97,11 +104,18 @@ namespace glabs
 
 	void ForwardRenderer::AllocateLights()
 	{
+		mLightKinds.resize(mParams.LightCount, static_cast<int>(LightKind::Point));
 		mLightCasts.resize(mParams.LightCount, 0);
+
 		mLightPositions.resize(mParams.LightCount, glm::vec3(0.0f));
+		mLightDirections.resize(mParams.LightCount, glm::vec3(0.0f));
+
+		mLightCutOff.resize(mParams.LightCount, 0.91f);
+		mLightOuterCutOff.resize(mParams.LightCount, 0.82);
 		mLightConstant.resize(mParams.LightCount, 1.0f);
 		mLightLinear.resize(mParams.LightCount, 1.0f);
 		mLightQuadratic.resize(mParams.LightCount, 1.0f);
+
 		mLightAmbient.resize(mParams.LightCount, glm::vec3(1.0f));
 		mLightDiffuse.resize(mParams.LightCount, glm::vec3(1.0f));
 		mLightSpecular.resize(mParams.LightCount, glm::vec3(1.0f));
@@ -140,11 +154,18 @@ namespace glabs
 		fs.SetUniform("uDirectionalLight.diffuse", mDirectionalLight.Diffuse);
 		fs.SetUniform("uDirectionalLight.specular", mDirectionalLight.Specular);
 
+		fs.SetUniform("uPointLight.kinds", mLightKinds);
 		fs.SetUniform("uPointLight.casts", mLightCasts);
+
 		fs.SetUniform("uPointLight.positions", mLightPositions);
+		fs.SetUniform("uPointLight.directions", mLightDirections);
+
 		fs.SetUniform("uPointLight.constants", mLightConstant);
 		fs.SetUniform("uPointLight.linears", mLightLinear);
 		fs.SetUniform("uPointLight.quadratics", mLightQuadratic);
+		fs.SetUniform("uPointLight.cutOff", mLightCutOff);
+		fs.SetUniform("uPointLight.outerCutOff", mLightOuterCutOff);
+
 		fs.SetUniform("uPointLight.ambient", mLightAmbient);
 		fs.SetUniform("uPointLight.diffuse", mLightDiffuse);
 		fs.SetUniform("uPointLight.specular", mLightSpecular);

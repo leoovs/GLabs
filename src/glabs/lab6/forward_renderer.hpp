@@ -7,21 +7,48 @@
 
 namespace glabs
 {
+	enum class LightKind : int
+	{
+		Point = 0,
+		Spot  = 1,
+	};
+
+	constexpr std::string_view LightKindToString(LightKind kind)
+	{
+		switch (kind)
+		{
+		case LightKind::Point:
+			return "Point light";
+		case LightKind::Spot:
+			return "Spot light";
+		default:
+			return "???";
+		}
+
+	}
+
 	struct DirectionalLight
 	{
-		glm::vec3 Direction = glm::vec3(0.0f, -1.0f, 0.0f);
-		glm::vec3 Ambient = glm::vec3(1.0f);
+		glm::vec3 Direction = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 Ambient = glm::vec3(0.01f);
 		glm::vec3 Diffuse = glm::vec3(1.0f);
 		glm::vec3 Specular = glm::vec3(1.0f);
 	};
 
-	struct PointLight
+	struct Light
 	{
+		std::reference_wrapper<int> Kind;
 		std::reference_wrapper<int> Cast;
+
 		std::reference_wrapper<glm::vec3> Position;
+		std::reference_wrapper<glm::vec3> Direction;
+
+		std::reference_wrapper<float> CutOff;
+		std::reference_wrapper<float> OuterCutOff;
 		std::reference_wrapper<float> Constant;
 		std::reference_wrapper<float> Linear;
 		std::reference_wrapper<float> Quadratic;
+
 		std::reference_wrapper<glm::vec3> Ambient;
 		std::reference_wrapper<glm::vec3> Diffuse;
 		std::reference_wrapper<glm::vec3> Specular;
@@ -43,7 +70,7 @@ namespace glabs
 			glm::vec3 Ambient = glm::vec3(0.0f);
 			glm::vec3 Diffuse = glm::vec3(1.0f);
 			glm::vec3 Specular = glm::vec3(1.0f);
-			float Shininess = 0.5f;
+			float Shininess = 103.0f;
 		};
 
 		struct Params
@@ -53,8 +80,8 @@ namespace glabs
 
 		ForwardRenderer(Params params);
 
-		PointLight GetPointLight(size_t lightIndex);
-		size_t GetPointLightCount() const;
+		Light GetLight(size_t lightIndex);
+		size_t GetLightCount() const;
 		OglProgramPipeline& GetPipeline(ShaderPipeline pipelineKind);
 		const DirectionalLight& GetDirectionalLight() const;
 
@@ -89,10 +116,17 @@ namespace glabs
 		glm::mat4 mProjection = glm::mat4(1.0f);
 
 		std::vector<int> mLightCasts;
+		std::vector<int> mLightKinds;
+
 		std::vector<glm::vec3> mLightPositions;
+		std::vector<glm::vec3> mLightDirections;
+
+		std::vector<float> mLightCutOff;
+		std::vector<float> mLightOuterCutOff;
 		std::vector<float> mLightConstant;
 		std::vector<float> mLightLinear;
 		std::vector<float> mLightQuadratic;
+
 		std::vector<glm::vec3> mLightAmbient;
 		std::vector<glm::vec3> mLightDiffuse;
 		std::vector<glm::vec3> mLightSpecular;

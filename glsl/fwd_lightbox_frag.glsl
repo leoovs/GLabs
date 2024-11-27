@@ -1,6 +1,6 @@
 #version 460 core
 
-#define POINT_LIGHT_N 8
+#define POINT_LIGHT_N 5
 
 struct PointLight
 {
