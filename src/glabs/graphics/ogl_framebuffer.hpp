@@ -49,7 +49,7 @@ namespace glabs
 
 		void BindToPipeline();
 
-		void ClearColor(glm::vec4 color);
+		void ClearColor(glm::vec4 color, size_t index = 0);
 		void ClearDepth(float depth);
 
 	private:

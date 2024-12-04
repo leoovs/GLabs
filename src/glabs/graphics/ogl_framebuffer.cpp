@@ -1,4 +1,5 @@
 #include "glabs/graphics/ogl_framebuffer.hpp"
+#include "glabs/pch.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -97,14 +98,18 @@ namespace glabs
 	void OglFramebuffer::BindToPipeline()
 	{
 		assert(0 != mNativeFramebuffer);
+
 		// TODO: should we explicitly provide target instead of hardcoding it?
 		glBindFramebuffer(GL_FRAMEBUFFER, mNativeFramebuffer);
+
+		GLenum drawBuffers[]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+		glNamedFramebufferDrawBuffers(mNativeFramebuffer, 3, drawBuffers);
 	}
 
-	void OglFramebuffer::ClearColor(glm::vec4 color)
+	void OglFramebuffer::ClearColor(glm::vec4 color, size_t index)
 	{
 		assert(0 != mNativeFramebuffer);
-		glClearNamedFramebufferfv(mNativeFramebuffer, GL_COLOR, 0, glm::value_ptr(color));
+		glClearNamedFramebufferfv(mNativeFramebuffer, GL_COLOR, GLint(index), glm::value_ptr(color));
 	}
 
 	void OglFramebuffer::ClearDepth(float depth)
