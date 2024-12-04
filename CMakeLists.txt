@@ -36,9 +36,6 @@ target_sources(
 	"src/glabs/graphics/ogl_texture2d.cpp"
 	"src/glabs/graphics/window.cpp"
 
-	"src/glabs/lab6/forward_renderer.cpp"
-	"src/glabs/lab6/lab6app.cpp"
-
 	"src/glabs/rendering/camera.cpp"
 	"src/glabs/rendering/dear_imgui.cpp"
 	"src/glabs/rendering/frame_timer.cpp"
