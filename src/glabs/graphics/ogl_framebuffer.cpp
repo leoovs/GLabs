@@ -50,19 +50,20 @@ namespace glabs
 	void OglFramebuffer::SetAttachment(
 		Attachment attachmentName,
 		OglTexture2D& texture,
-		size_t mipLevelIndex
+		int32_t mipLevelIndex,
+		int32_t arrayIndex
 	)
 	{
 		assert(0 != mNativeFramebuffer);
 
 		auto iAttachment = static_cast<size_t>(attachmentName);
 
-		// TODO: replace with glNamedFramebufferTextureLayer to support cube maps.
-		glNamedFramebufferTexture(
+		glNamedFramebufferTextureLayer(
 			mNativeFramebuffer,
 			AttachmentToNativeAttachment(attachmentName),
 			(mAttachments.at(iAttachment) = &texture)->GetNativeTexture2D(),
-			mAttachmentMipMapIndices.at(iAttachment) = mipLevelIndex
+			mAttachmentMipMapIndices.at(iAttachment) = mipLevelIndex,
+			mAttachmentArrayIndices.at(iAttachment) = arrayIndex
 		);
 	}
 

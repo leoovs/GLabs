@@ -79,6 +79,7 @@ namespace glabs
 			int32_t Width = 8;
 			int32_t Height = 8;
 			int32_t MipLevels = 1;
+			int32_t ArraySize = 1;
 			GraphicsFormat Format = GraphicsFormat::R8G8B8_UNORM;
 		};
 
@@ -99,17 +100,17 @@ namespace glabs
 		const Params& GetParams() const;
 		GLuint GetNativeTexture2D() const;
 
-		void SetData(const void* data);
+		void SetData(const void* data, int32_t arrayIndex = 0);
 
 		void GenerateMipMaps();
 		void BindToPipeline(int32_t unit);
 
 	private:
-		void CreateNativeTexture2D();
-		void DestroyNativeTexture2D();
+		void CreateNativeTexture2DArray();
+		void DestroyNativeTexture2DArray();
 
 		Params mParams;
-		GLuint mNativeTexture2D = 0;
+		GLuint mNativeTexture2DArray = 0;
 	};
 }
 

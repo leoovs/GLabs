@@ -42,7 +42,8 @@ namespace glabs
 		void SetAttachment(
 			Attachment attachmentName,
 			OglTexture2D& texture,
-			size_t mipLevelIndex = 0
+			int32_t mipLevelIndex = 0,
+			int32_t arrayIndex = 0
 		);
 		void RemoveAttachment(Attachment attachmentName);
 		OglTexture2D& GetAttachment(Attachment attachmentName) const;
@@ -61,7 +62,8 @@ namespace glabs
 		Params mParams;
 		GLuint mNativeFramebuffer = 0;
 		std::array<OglTexture2D*, size_t(Attachment::Count_)> mAttachments = {};
-		std::array<size_t, size_t(Attachment::Count_)> mAttachmentMipMapIndices = {};
+		std::array<int32_t, size_t(Attachment::Count_)> mAttachmentMipMapIndices = {};
+		std::array<int32_t, size_t(Attachment::Count_)> mAttachmentArrayIndices = {};
 	};
 }
 

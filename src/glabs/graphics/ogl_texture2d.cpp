@@ -5,12 +5,12 @@ namespace glabs
 	OglTexture2D::OglTexture2D(Params params)
 		: mParams(std::move(params))
 	{
-		CreateNativeTexture2D();
+		CreateNativeTexture2DArray();
 	}
 
 	OglTexture2D::OglTexture2D(OglTexture2D&& other) noexcept
 		: mParams(std::move(other.mParams))
-		, mNativeTexture2D(std::exchange(other.mNativeTexture2D, 0))
+		, mNativeTexture2DArray(std::exchange(other.mNativeTexture2DArray, 0))
 	{}
 
 	OglTexture2D& OglTexture2D::operator=(OglTexture2D&& other) noexcept
@@ -20,16 +20,16 @@ namespace glabs
 			return *this;
 		}
 
-		DestroyNativeTexture2D();
+		DestroyNativeTexture2DArray();
 		mParams = std::move(other.mParams);
-		mNativeTexture2D = std::exchange(other.mNativeTexture2D, 0);
+		mNativeTexture2DArray = std::exchange(other.mNativeTexture2DArray, 0);
 
 		return *this;
 	}
 
 	OglTexture2D::~OglTexture2D()
 	{
-		DestroyNativeTexture2D();
+		DestroyNativeTexture2DArray();
 	}
 
 	const OglTexture2D::Params& OglTexture2D::GetParams() const
@@ -39,18 +39,22 @@ namespace glabs
 
 	GLuint OglTexture2D::GetNativeTexture2D() const
 	{
-		return mNativeTexture2D;
+		return mNativeTexture2DArray;
 	}
 
-	void OglTexture2D::SetData(const void* data)
+	void OglTexture2D::SetData(const void* data, int32_t arrayIndex)
 	{
-		glTextureSubImage2D(
-			mNativeTexture2D,
+		assert(0 != mNativeTexture2DArray);
+
+		glTextureSubImage3D(
+			mNativeTexture2DArray,
+			0,
 			0,
 			0,
 			0,
 			GLsizei(mParams.Width),
 			GLsizei(mParams.Height),
+			1,
 			GetNativeFormat(mParams.Format),
 			GetFormatType(mParams.Format),
 			data
@@ -59,37 +63,40 @@ namespace glabs
 
 	void OglTexture2D::GenerateMipMaps()
 	{
-		glGenerateTextureMipmap(mNativeTexture2D);
+		glGenerateTextureMipmap(mNativeTexture2DArray);
 	}
 
 	void OglTexture2D::BindToPipeline(int32_t unit)
 	{
-		glBindTextureUnit(GLuint(unit), mNativeTexture2D);
+		glBindTextureUnit(GLuint(unit), mNativeTexture2DArray);
 	}
 
-	void OglTexture2D::CreateNativeTexture2D()
+	void OglTexture2D::CreateNativeTexture2DArray()
 	{
-		glCreateTextures(GL_TEXTURE_2D, 1, &mNativeTexture2D);
+		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &mNativeTexture2DArray);
+
 		glObjectLabel(
 			GL_TEXTURE,
-			mNativeTexture2D,
+			mNativeTexture2DArray,
 			GLsizei(mParams.DebugName.length()),
 			mParams.DebugName.data()
 		);
-		glTextureStorage2D(
-			mNativeTexture2D,
-			GLsizei(mParams.MipLevels),
+
+		glTextureStorage3D(
+			mNativeTexture2DArray,
+			mParams.MipLevels,
 			GetInternalFormat(mParams.Format),
-			GLsizei(mParams.Width),
-			GLsizei(mParams.Height)
+			mParams.Width,
+			mParams.Height,
+			mParams.ArraySize
 		);
 	}
 
-	void OglTexture2D::DestroyNativeTexture2D()
+	void OglTexture2D::DestroyNativeTexture2DArray()
 	{
-		if (0 != mNativeTexture2D)
+		if (0 != mNativeTexture2DArray)
 		{
-			glDeleteTextures(1, &mNativeTexture2D);
+			glDeleteTextures(1, &mNativeTexture2DArray);
 		}
 	}
 }
