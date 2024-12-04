@@ -104,7 +104,7 @@ namespace glabs
 		glBindFramebuffer(GL_FRAMEBUFFER, mNativeFramebuffer);
 
 		GLenum drawBuffers[]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-		glNamedFramebufferDrawBuffers(mNativeFramebuffer, 3, drawBuffers);
+		glNamedFramebufferDrawBuffers(mNativeFramebuffer, std::size(drawBuffers), drawBuffers);
 	}
 
 	void OglFramebuffer::ClearColor(glm::vec4 color, size_t index)
