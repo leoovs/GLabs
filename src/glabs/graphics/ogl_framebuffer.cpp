@@ -117,8 +117,12 @@ namespace glabs
 	{
 		switch (attachment)
 		{
-		case Attachment::Color:
+		case Attachment::Color0:
 			return GL_COLOR_ATTACHMENT0;
+		case Attachment::Color1:
+			return GL_COLOR_ATTACHMENT1;
+		case Attachment::Color2:
+			return GL_COLOR_ATTACHMENT2;
 		case Attachment::DepthStencil:
 			return GL_DEPTH_STENCIL_ATTACHMENT;
 		default:

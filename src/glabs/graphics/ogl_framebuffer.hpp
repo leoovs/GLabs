@@ -10,7 +10,9 @@ namespace glabs
 	public:
 		enum class Attachment
 		{
-			Color,
+			Color0,
+			Color1,
+			Color2,
 			DepthStencil,
 
 			Count_,
