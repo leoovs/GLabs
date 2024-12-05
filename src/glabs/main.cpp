@@ -1,13 +1,18 @@
 #include "glabs/app/app_container.hpp"
 #include "glabs/app/basic_app.hpp"
 #include "glabs/graphics/glfw_life.hpp"
+#include "glabs/graphics/image2d.hpp"
 #include "glabs/graphics/ogl_framebuffer.hpp"
+#include "glabs/graphics/ogl_geometry_input.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
 #include "glabs/graphics/ogl_texture2d.hpp"
 #include "glabs/rendering/camera.hpp"
+#include "glabs/rendering/first_person_camera_controller.hpp"
+#include "glabs/rendering/spheric_camera_controller.hpp"
 #include "glabs/rendering/mesh.hpp"
 #include "glabs/rendering/obj_importer.hpp"
 #include "glabs/rendering/shader_library.hpp"
+
 #include <glm/ext/matrix_clip_space.hpp>
 
 using namespace glabs;
@@ -22,6 +27,11 @@ private:
 		Window& window = GetWindow();
 		OnWindowResize(window.GetWidth(), window.GetHeight());
 
+		OglGeometryInput::Params emptyGeometryParams;
+		emptyGeometryParams.DebugName = "Empty";
+
+		mEmptyGeometry = OglGeometryInput(std::move(emptyGeometryParams));
+
 		mStormtrooper = ObjImporter()
 			.OpenFile("models/stormtrooper.obj")
 			.LoadAllShapes()
@@ -29,106 +39,171 @@ private:
 
 		mCamera.SetEyePosition({ 0.0f, 0.0f, 3.0f });
 		mCamera.LookAt({ 0.0f, 2.0f, 0.0f });
+
+		mCameraController.SetCamera(&mCamera);
+
+		LoadCubemap();
 	}
 
 	void OnUpdate(float dt) override
 	{
+		if (IsKeyDown(GLFW_KEY_W))
+		{
+			mCamera.Move(mCamera.GetFront() * dt);
+		}
+		if (IsKeyDown(GLFW_KEY_S))
+		{
+			mCamera.Move(-mCamera.GetFront() * dt);
+		}
+		if (IsKeyDown(GLFW_KEY_A))
+		{
+			mCamera.Move(-mCamera.GetRight() * dt);
+		}
+		if (IsKeyDown(GLFW_KEY_D))
+		{
+			mCamera.Move(mCamera.GetRight() * dt);
+		}
+
 		Render();
 	}
 
 	void OnWindowResize(int32_t width, int32_t height) override
 	{
-		SetupDeferredPass(width, height);
 		mProjection = glm::perspective(glm::radians(45.0f), float(width) / height, 0.001f, 1000.0f);
+	}
+
+	void OnMouseMove(float x, float y) override
+	{
+		mCameraController.OnMouseMove(x, y);
 	}
 
 	void Render()
 	{
 		glEnable(GL_DEPTH_TEST);
-		mDeferredPass.ClearColor(glm::vec4(0.0f), 0);
-		mDeferredPass.ClearColor(glm::vec4(0.0f), 1);
-		mDeferredPass.ClearColor(glm::vec4(0.0f), 2);
-		mDeferredPass.ClearDepth(1.0f);
-		mDeferredPass.BindToPipeline();
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		auto& vs = mPrograms[ShaderStage::Vertex].Get();
-		vs.SetUniform("uViewProjection", mProjection * mCamera.CalculateLookAt());
-		vs.SetUniform("uModel", mModel);
-		vs.SetUniform("uInversedTransposedModel", glm::transpose(glm::inverse(mModel)));
 
+		glm::mat4 lookAtWithoutTranslation = glm::mat4(glm::mat3(mCamera.CalculateLookAt()));
+		vs.SetUniform("uViewProjection", mProjection * lookAtWithoutTranslation);
+
+		mCubeGeometry.BindToPipeline();
+		mCubemap.BindToPipeline(0);
 		mPrograms.BindToPipeline();
 
-		mStormtrooper.ForEachShape(
-			[this](const Submesh& shape)
-			{
-				shape.GetGeometry().BindToPipeline();
-				glDrawArrays(GL_TRIANGLES, 0, shape.GetVertexCount());
-			}
-		);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		GetWindow().Present();
 	}
 
 	void LoadShaders()
 	{
-		auto& vs = mShaders[ShaderStage::Vertex].FetchFromFile("glsl/def_vert.glsl", "def");
-		auto& ps = mShaders[ShaderStage::Fragment].FetchFromFile("glsl/def_frag.glsl", "def");
+		auto& vs = mShaders[ShaderStage::Vertex].FetchFromFile("glsl/quad_vert.glsl", "quad");
+		auto& ps = mShaders[ShaderStage::Fragment].FetchFromFile("glsl/quad_frag.glsl", "quad");
 
 		mPrograms = OglProgramPipeline({ "Deferred Shading" });
 		mPrograms[ShaderStage::Vertex].Set(vs);
 		mPrograms[ShaderStage::Fragment].Set(ps);
 	}
 
-	void SetupDeferredPass(int32_t width, int32_t height)
+	void LoadCubemap()
 	{
-		OglTexture2D::Params attribTextureParams;
-		attribTextureParams.DebugName = "Positions texture";
-		attribTextureParams.Width = width;
-		attribTextureParams.Height = height;
-		attribTextureParams.Format = GraphicsFormat::R16G16B16_FLOAT;
-		attribTextureParams.MipLevels = OglTexture2D::CalculateMipLevels(width, height);
+		float positions[]
+		{
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
 
-		mPositionsTexture = OglTexture2D(attribTextureParams);
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
 
-		attribTextureParams.DebugName = "Normals texture";
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
 
-		mNormalsTexture = OglTexture2D(attribTextureParams);
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
 
-		attribTextureParams.DebugName = "UV texture";
-		attribTextureParams.Format = GraphicsFormat::R16G16_FLOAT;
+			-1.0f,  1.0f, -1.0f,
+			1.0f,  1.0f, -1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
 
-		mUVTexture = OglTexture2D(std::move(attribTextureParams));
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			1.0f, -1.0f,  1.0f
+		};
 
-		OglTexture2D::Params depthBufferParams;
-		depthBufferParams.DebugName = "Deferred depth buffer";
-		depthBufferParams.Width = width;
-		depthBufferParams.Height = width;
-		depthBufferParams.Format = GraphicsFormat::D32_UNORM;
-		depthBufferParams.MipLevels = OglTexture2D::CalculateMipLevels(width, height);
+		OglBuffer::Params cubeParams;
+		cubeParams.DebugName = "Cube positions";
+		cubeParams.Target = GL_ARRAY_BUFFER;
+		cubeParams.ElementCount = 36;
+		cubeParams.ElementSize = sizeof(float[3]);
 
-		mDepthBuffer = OglTexture2D(std::move(depthBufferParams));
+		mCube = OglBuffer(std::move(cubeParams));
+		mCube.SetData(positions);
 
-		mDeferredPass = OglFramebuffer({ "Deferred pass" });
-		mDeferredPass.SetAttachment(OglFramebuffer::Attachment::Color0, mPositionsTexture);
-		mDeferredPass.SetAttachment(OglFramebuffer::Attachment::Color1, mNormalsTexture);
-		mDeferredPass.SetAttachment(OglFramebuffer::Attachment::Color2, mUVTexture);
-		mDeferredPass.SetAttachment(OglFramebuffer::Attachment::DepthStencil, mDepthBuffer);
+		OglGeometryInput::Params cubeGeometryParams;
+		cubeGeometryParams.DebugName = "Cube geometry";
+		cubeGeometryParams.VertexBuffers[0] = &mCube;
+		cubeGeometryParams.Vertices = { VertexParams{ 0, VertexFormat::Float3 } };
+
+		mCubeGeometry = OglGeometryInput(std::move(cubeGeometryParams));
+
+		OglTexture2D::Params cubemapParams;
+		cubemapParams.DebugName = "Cubemap";
+		cubemapParams.Width = 2048;
+		cubemapParams.Height = 2048;
+		cubemapParams.ArraySize = 6;
+		cubemapParams.Format = GraphicsFormat::R8G8B8_UNORM;
+		cubemapParams.MipLevels = OglTexture2D::CalculateMipLevels(2048, 2048);
+
+		mCubemap = OglTexture2D(std::move(cubemapParams));
+
+		auto faceNames = { "right.jpg", "left.jpg", "top.jpg", "bottom.jpg", "back.jpg", "front.jpg" };
+
+		int iFace = 0;
+		for (const char* faceName : faceNames)
+		{
+			Image2D face = Image2D::FromFile(std::string("models/") + faceName);
+			mCubemap.SetData(face.GetPixels(), iFace);
+			iFace++;
+		}
 	}
 
+	OglGeometryInput mEmptyGeometry;
 	Mesh mStormtrooper;
 	Camera mCamera;
+	SphericCameraController mCameraController;
+
+	OglBuffer mCube;
+	OglGeometryInput mCubeGeometry;
 
 	ShaderLibrary mShaders;
 	OglProgramPipeline mPrograms;
 
-	OglFramebuffer mDeferredPass;
-	OglTexture2D mPositionsTexture;
-	OglTexture2D mNormalsTexture;
-	OglTexture2D mUVTexture;
-	OglTexture2D mDepthBuffer;
+	// TODO: implement OglCubemap
+	OglTexture2D mCubemap;
 
 	glm::mat4 mProjection = glm::mat4(1.0f);
 	glm::mat4 mModel = glm::mat4(1.0f);

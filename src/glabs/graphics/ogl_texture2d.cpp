@@ -51,7 +51,7 @@ namespace glabs
 			0,
 			0,
 			0,
-			0,
+			arrayIndex,
 			GLsizei(mParams.Width),
 			GLsizei(mParams.Height),
 			1,
