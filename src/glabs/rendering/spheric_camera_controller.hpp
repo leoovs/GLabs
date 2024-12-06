@@ -6,12 +6,12 @@
 
 namespace glabs
 {
-	class FirstPersonCameraController
+	class SphericCameraController
 	{
 	public:
-		FirstPersonCameraController() = default;
+		SphericCameraController() = default;
 
-		FirstPersonCameraController(Camera* controlledCamera);
+		SphericCameraController(Camera* controlledCamera);
 
 		void SetCamera(Camera* controlledCamera);
 		Camera* GetCamera() const;

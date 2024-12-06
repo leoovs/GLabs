@@ -1,4 +1,4 @@
-#include "glabs/rendering/first_person_camera_controller.hpp"
+#include "glabs/rendering/spheric_camera_controller.hpp"
 
 namespace glabs
 {
@@ -62,8 +62,6 @@ namespace glabs
 		float speed = 0.01f;
 		IncrementZenith(dy * speed);
 		IncrementAzimuth(dx * speed);
-
-		std::cout << glm::degrees(mZenith) << ' ' << glm::degrees(mAzimuth) << '\n';
 
 		mLastMouseX = x;
 		mLastMouseY = y;

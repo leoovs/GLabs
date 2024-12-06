@@ -2,13 +2,12 @@
 
 in vec3 uv;
 
-layout (binding = 0) uniform samplerCube uCubemap;
+layout (binding = 0) uniform samplerCubeArray uCubemap;
 
 out vec4 outColor;
 
 void main()
 {
-    outColor = sampleCubeArray(uCubemap, uv);
-    // outColor = vec4(uv, 1.0f);
+    outColor = texture(uCubemap, vec4(uv, 0.0f));
 }
 

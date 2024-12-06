@@ -2,12 +2,13 @@
 #include "glabs/app/basic_app.hpp"
 #include "glabs/graphics/glfw_life.hpp"
 #include "glabs/graphics/image2d.hpp"
+#include "glabs/graphics/ogl_cubemap.hpp"
 #include "glabs/graphics/ogl_framebuffer.hpp"
 #include "glabs/graphics/ogl_geometry_input.hpp"
 #include "glabs/graphics/ogl_program_pipeline.hpp"
+#include "glabs/graphics/ogl_sampler.hpp"
 #include "glabs/graphics/ogl_texture2d.hpp"
 #include "glabs/rendering/camera.hpp"
-#include "glabs/rendering/first_person_camera_controller.hpp"
 #include "glabs/rendering/spheric_camera_controller.hpp"
 #include "glabs/rendering/mesh.hpp"
 #include "glabs/rendering/obj_importer.hpp"
@@ -38,11 +39,12 @@ private:
 			.Build();
 
 		mCamera.SetEyePosition({ 0.0f, 0.0f, 3.0f });
-		mCamera.LookAt({ 0.0f, 2.0f, 0.0f });
 
 		mCameraController.SetCamera(&mCamera);
 
 		LoadCubemap();
+
+		glfwSetInputMode(GetWindow().GetNativeWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
 	void OnUpdate(float dt) override
@@ -69,7 +71,8 @@ private:
 
 	void OnWindowResize(int32_t width, int32_t height) override
 	{
-		mProjection = glm::perspective(glm::radians(45.0f), float(width) / height, 0.001f, 1000.0f);
+		mProjection = glm::perspective(glm::radians(60.0f), float(width) / height, 0.001f, 1000.0f);
+		glViewport(0, 0, width, height);
 	}
 
 	void OnMouseMove(float x, float y) override
@@ -88,8 +91,10 @@ private:
 		glm::mat4 lookAtWithoutTranslation = glm::mat4(glm::mat3(mCamera.CalculateLookAt()));
 		vs.SetUniform("uViewProjection", mProjection * lookAtWithoutTranslation);
 
-		mCubeGeometry.BindToPipeline();
 		mCubemap.BindToPipeline(0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, mCubemap.GetNativeCubemap());
+		mCubemapSampler.BindToPipeline(0);
+		mCubeGeometry.BindToPipeline();
 		mPrograms.BindToPipeline();
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -170,25 +175,30 @@ private:
 
 		mCubeGeometry = OglGeometryInput(std::move(cubeGeometryParams));
 
-		OglTexture2D::Params cubemapParams;
+		OglCubemap::Params cubemapParams;
 		cubemapParams.DebugName = "Cubemap";
-		cubemapParams.Width = 2048;
-		cubemapParams.Height = 2048;
-		cubemapParams.ArraySize = 6;
+		cubemapParams.SideSize = 2048;
 		cubemapParams.Format = GraphicsFormat::R8G8B8_UNORM;
-		cubemapParams.MipLevels = OglTexture2D::CalculateMipLevels(2048, 2048);
+		cubemapParams.MipLevels = CalculateMipLevels(2048, 2048);
 
-		mCubemap = OglTexture2D(std::move(cubemapParams));
+		mCubemap = OglCubemap(std::move(cubemapParams));
 
-		auto faceNames = { "right.jpg", "left.jpg", "top.jpg", "bottom.jpg", "back.jpg", "front.jpg" };
+		auto faceNames = { "right.jpg", "left.jpg", "top.jpg", "bottom.jpg", "front.jpg", "back.jpg" };
 
 		int iFace = 0;
 		for (const char* faceName : faceNames)
 		{
 			Image2D face = Image2D::FromFile(std::string("models/") + faceName);
-			mCubemap.SetData(face.GetPixels(), iFace);
+			mCubemap.SetData(face.GetPixels(), OglCubemap::Face(iFace));
 			iFace++;
 		}
+
+		mCubemap.GenerateMipMaps();
+
+		OglSampler::Params cubemapSamplerParams;
+		cubemapSamplerParams.DebugName = "Cubemap sampler";
+
+		mCubemapSampler = OglSampler(std::move(cubemapSamplerParams));
 	}
 
 	OglGeometryInput mEmptyGeometry;
@@ -203,7 +213,8 @@ private:
 	OglProgramPipeline mPrograms;
 
 	// TODO: implement OglCubemap
-	OglTexture2D mCubemap;
+	OglCubemap mCubemap;
+	OglSampler mCubemapSampler;
 
 	glm::mat4 mProjection = glm::mat4(1.0f);
 	glm::mat4 mModel = glm::mat4(1.0f);

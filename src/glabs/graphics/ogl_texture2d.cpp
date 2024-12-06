@@ -97,6 +97,7 @@ namespace glabs
 		if (0 != mNativeTexture2DArray)
 		{
 			glDeleteTextures(1, &mNativeTexture2DArray);
+			mNativeTexture2DArray = 0;
 		}
 	}
 }
