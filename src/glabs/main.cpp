@@ -104,8 +104,8 @@ private:
 
 	void LoadShaders()
 	{
-		auto& vs = mShaders[ShaderStage::Vertex].FetchFromFile("glsl/quad_vert.glsl", "quad");
-		auto& ps = mShaders[ShaderStage::Fragment].FetchFromFile("glsl/quad_frag.glsl", "quad");
+		auto& vs = mShaders[ShaderStage::Vertex].FetchFromFile("glsl/skybox_vert.glsl", "skybox");
+		auto& ps = mShaders[ShaderStage::Fragment].FetchFromFile("glsl/skybox_frag.glsl", "skybox");
 
 		mPrograms = OglProgramPipeline({ "Deferred Shading" });
 		mPrograms[ShaderStage::Vertex].Set(vs);
