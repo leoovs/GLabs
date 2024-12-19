@@ -28,11 +28,6 @@ private:
 		Window& window = GetWindow();
 		OnWindowResize(window.GetWidth(), window.GetHeight());
 
-		OglGeometryInput::Params emptyGeometryParams;
-		emptyGeometryParams.DebugName = "Empty";
-
-		mEmptyGeometry = OglGeometryInput(std::move(emptyGeometryParams));
-
 		mStormtrooper = ObjImporter()
 			.OpenFile("models/stormtrooper.obj")
 			.LoadAllShapes()
@@ -86,14 +81,14 @@ private:
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		auto& vs = mPrograms[ShaderStage::Vertex].Get();
-
 		glm::mat4 lookAtWithoutTranslation = glm::mat4(glm::mat3(mCamera.CalculateLookAt()));
+
+		auto& vs = mPrograms[ShaderStage::Vertex].Get();
 		vs.SetUniform("uViewProjection", mProjection * lookAtWithoutTranslation);
 
 		mCubemap.BindToPipeline(0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, mCubemap.GetNativeCubemap());
 		mCubemapSampler.BindToPipeline(0);
+
 		mCubeGeometry.BindToPipeline();
 		mPrograms.BindToPipeline();
 
@@ -189,7 +184,7 @@ private:
 		for (const char* faceName : faceNames)
 		{
 			Image2D face = Image2D::FromFile(std::string("models/") + faceName);
-			mCubemap.SetData(face.GetPixels(), OglCubemap::Face(iFace));
+			mCubemap.SetData(face.GetPixels(), CubemapFace(iFace));
 			iFace++;
 		}
 
@@ -197,11 +192,12 @@ private:
 
 		OglSampler::Params cubemapSamplerParams;
 		cubemapSamplerParams.DebugName = "Cubemap sampler";
+		cubemapSamplerParams.MagnifyingFilter = TextureFilter::Linear;
+		cubemapSamplerParams.MinimizingFilter = TextureFilter::Point;
 
 		mCubemapSampler = OglSampler(std::move(cubemapSamplerParams));
 	}
 
-	OglGeometryInput mEmptyGeometry;
 	Mesh mStormtrooper;
 	Camera mCamera;
 	SphericCameraController mCameraController;
@@ -212,7 +208,6 @@ private:
 	ShaderLibrary mShaders;
 	OglProgramPipeline mPrograms;
 
-	// TODO: implement OglCubemap
 	OglCubemap mCubemap;
 	OglSampler mCubemapSampler;
 

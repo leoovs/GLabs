@@ -31,6 +31,7 @@ target_sources(
 	"src/glabs/graphics/ogl_buffers.cpp"
 	"src/glabs/graphics/ogl_cubemap.cpp"
 	"src/glabs/graphics/ogl_framebuffer.cpp"
+	"src/glabs/graphics/ogl_framebuffer_binding.cpp"
 	"src/glabs/graphics/ogl_geometry_input.cpp"
 	"src/glabs/graphics/ogl_program_pipeline.cpp"
 	"src/glabs/graphics/ogl_sampler.cpp"

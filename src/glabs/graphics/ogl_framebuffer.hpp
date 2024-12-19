@@ -1,23 +1,14 @@
 #pragma once
 
+#include "glabs/graphics/framebuffer_attachment.hpp"
 #include "glabs/pch.hpp"
-#include "glabs/graphics/ogl_texture2d.hpp"
+#include "glabs/graphics/ogl_framebuffer_binding.hpp"
 
 namespace glabs
 {
 	class OglFramebuffer
 	{
 	public:
-		enum class Attachment
-		{
-			Color0,
-			Color1,
-			Color2,
-			DepthStencil,
-
-			Count_,
-		};
-
 		struct Params
 		{
 			std::string DebugName = "Unnamed OglFramebuffer";
@@ -38,32 +29,39 @@ namespace glabs
 
 		const Params& GetParams() const;
 		GLuint GetNativeFramebuffer() const;
-
-		void SetAttachment(
-			Attachment attachmentName,
-			OglTexture2D& texture,
-			int32_t mipLevelIndex = 0,
-			int32_t arrayIndex = 0
-		);
-		void RemoveAttachment(Attachment attachmentName);
-		OglTexture2D& GetAttachment(Attachment attachmentName) const;
-
 		void BindToPipeline();
 
 		void ClearColor(glm::vec4 color, size_t index = 0);
 		void ClearDepth(float depth);
 
-	private:
-		static GLenum AttachmentToNativeAttachment(Attachment attachment);
+		void AttachTexture2D(
+			FramebufferAttachment attachment,
+			const OglTexture2D& texture,
+			int32_t arrayIndex = 0,
+			int32_t mipLevelIndex = 0
+		);
 
+		void AttachCubemapFace(
+			FramebufferAttachment attachment,
+			const OglCubemap& cubemap,
+			CubemapFace face,
+			int32_t arrayIndex = 0,
+			int32_t mipLevelIndex = 0
+		);
+
+		void BindAttachment(FramebufferAttachment attachment);
+		void UnbindAttachment(FramebufferAttachment attachment);
+
+	private:
 		void CreateNativeFramebuffer();
 		void DestroyNativeFramebuffer();
 
 		Params mParams;
 		GLuint mNativeFramebuffer = 0;
-		std::array<OglTexture2D*, size_t(Attachment::Count_)> mAttachments = {};
-		std::array<int32_t, size_t(Attachment::Count_)> mAttachmentMipMapIndices = {};
-		std::array<int32_t, size_t(Attachment::Count_)> mAttachmentArrayIndices = {};
+		std::array<
+			std::unique_ptr<OglFramebufferBinding>,
+			size_t(FramebufferAttachment::Count_)
+		> mAttachments;
 	};
 }
 

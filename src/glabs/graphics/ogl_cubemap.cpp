@@ -1,5 +1,7 @@
 #include "glabs/graphics/ogl_cubemap.hpp"
+
 #include "glabs/pch.hpp"
+#include "glabs/graphics/cubemap_face.hpp"
 
 namespace glabs
 {
@@ -44,16 +46,16 @@ namespace glabs
 		return mNativeCubemap;
 	}
 
-	void OglCubemap::SetData(const void* data, Face face, int32_t arrayIndex)
+	void OglCubemap::SetData(const void* data, CubemapFace face, int32_t arrayIndex)
 	{
-		auto faceIndex = static_cast<GLuint>(FaceToNativeFace(face));
+		auto faceIndex = static_cast<GLuint>(CubemapFaceToNative(face));
 
 		glTextureSubImage3D(
 			mNativeCubemap,
 			0,
 			0,
 			0,
-			arrayIndex * cFaceCount + faceIndex,
+			arrayIndex * size_t(CubemapFace::Count_) + faceIndex,
 			mParams.SideSize,
 			mParams.SideSize,
 			1,
@@ -73,11 +75,6 @@ namespace glabs
 		glBindTextureUnit(GLuint(textureUnit), mNativeCubemap);
 	}
 
-	GLenum OglCubemap::FaceToNativeFace(Face face)
-	{
-		return static_cast<GLenum>(face);
-	}
-
 	void OglCubemap::CreateNativeCubemap()
 	{
 		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &mNativeCubemap);
@@ -95,7 +92,7 @@ namespace glabs
 			GetInternalFormat(mParams.Format),
 			mParams.SideSize,
 			mParams.SideSize,
-			cFaceCount * mParams.ArraySize
+			size_t(CubemapFace::Count_) * mParams.ArraySize
 		);
 	}
 

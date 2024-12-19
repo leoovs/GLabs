@@ -5,21 +5,11 @@
 
 namespace glabs
 {
+	enum class CubemapFace;
+
 	class OglCubemap
 	{
 	public:
-		enum class Face
-		{
-			Right,
-			Left,
-			Top,
-			Bottom,
-			Back,
-			Front,
-
-			Count_
-		};
-
 		struct Params
 		{
 			std::string DebugName = "Unnamed OglCubemap";
@@ -42,16 +32,12 @@ namespace glabs
 		const Params& GetParams() const;
 		GLuint GetNativeCubemap() const;
 
-		void SetData(const void* data, Face face, int32_t arrayIndex = 0);
+		void SetData(const void* data, CubemapFace face, int32_t arrayIndex = 0);
 
 		void GenerateMipMaps();
 		void BindToPipeline(int32_t textureUnit);
 
 	private:
-		static constexpr GLsizei cFaceCount = 6;
-
-		static GLenum FaceToNativeFace(Face face);
-
 		void CreateNativeCubemap();
 		void DestroyNativeCubemap();
 

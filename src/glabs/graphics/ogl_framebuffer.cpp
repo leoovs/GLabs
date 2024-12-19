@@ -14,7 +14,7 @@ namespace glabs
 	OglFramebuffer::OglFramebuffer(OglFramebuffer&& other) noexcept
 		: mParams(std::move(other.mParams))
 		, mNativeFramebuffer(std::exchange(other.mNativeFramebuffer, 0))
-		, mAttachments(std::exchange(other.mAttachments, {}))
+		, mAttachments(std::move(other.mAttachments))
 	{}
 
 	OglFramebuffer& OglFramebuffer::operator=(OglFramebuffer&& other) noexcept
@@ -27,7 +27,7 @@ namespace glabs
 		DestroyNativeFramebuffer();
 		mParams = std::move(other.mParams);
 		mNativeFramebuffer = std::exchange(other.mNativeFramebuffer, 0);
-		mAttachments = std::exchange(other.mAttachments, {});
+		mAttachments = std::move(other.mAttachments);
 
 		return *this;
 	}
@@ -45,55 +45,6 @@ namespace glabs
 	GLuint OglFramebuffer::GetNativeFramebuffer() const
 	{
 		return mNativeFramebuffer;
-	}
-
-	void OglFramebuffer::SetAttachment(
-		Attachment attachmentName,
-		OglTexture2D& texture,
-		int32_t mipLevelIndex,
-		int32_t arrayIndex
-	)
-	{
-		assert(0 != mNativeFramebuffer);
-
-		auto iAttachment = static_cast<size_t>(attachmentName);
-
-		glNamedFramebufferTextureLayer(
-			mNativeFramebuffer,
-			AttachmentToNativeAttachment(attachmentName),
-			(mAttachments.at(iAttachment) = &texture)->GetNativeTexture2D(),
-			mAttachmentMipMapIndices.at(iAttachment) = mipLevelIndex,
-			mAttachmentArrayIndices.at(iAttachment) = arrayIndex
-		);
-	}
-
-	void OglFramebuffer::RemoveAttachment(Attachment attachmentName)
-	{
-		assert(0 != mNativeFramebuffer);
-
-		auto iAttachment = static_cast<size_t>(attachmentName);
-
-		mAttachments.at(iAttachment) = nullptr;
-		mAttachmentMipMapIndices.at(iAttachment) = 0;
-
-		glNamedFramebufferTexture(
-			mNativeFramebuffer,
-			AttachmentToNativeAttachment(attachmentName),
-			0,
-			0
-		);
-	}
-
-	OglTexture2D& OglFramebuffer::GetAttachment(Attachment attachmentName) const
-	{
-		assert(0 != mNativeFramebuffer);
-
-		auto iAttachment = static_cast<size_t>(attachmentName);
-		OglTexture2D* attachment = mAttachments.at(iAttachment);
-
-		assert(nullptr != attachment);
-
-		return *attachment;
 	}
 
 	void OglFramebuffer::BindToPipeline()
@@ -119,20 +70,46 @@ namespace glabs
 		glClearNamedFramebufferfv(mNativeFramebuffer, GL_DEPTH, 0, &depth);
 	}
 
-	GLenum OglFramebuffer::AttachmentToNativeAttachment(Attachment attachment)
+	void OglFramebuffer::AttachTexture2D(
+		FramebufferAttachment attachment,
+		const OglTexture2D& texture,
+		int32_t arrayIndex,
+		int32_t mipLevelIndex
+	)
 	{
-		switch (attachment)
+		mAttachments.at(size_t(attachment)) = std::make_unique<
+			OglFramebufferTexture2DBinding
+		>(*this, texture, attachment, arrayIndex, mipLevelIndex);
+	}
+
+	void OglFramebuffer::AttachCubemapFace(
+		FramebufferAttachment attachment,
+		const OglCubemap& cubemap,
+		CubemapFace face,
+		int32_t arrayIndex,
+		int32_t mipLevelIndex
+	)
+	{
+		mAttachments.at(size_t(attachment)) = std::make_unique<
+			OglFramebufferCubemapBinding
+		>(*this, cubemap, attachment, face, arrayIndex, mipLevelIndex);
+	}
+
+	void OglFramebuffer::BindAttachment(FramebufferAttachment attachment)
+	{
+		OglFramebufferBinding* binding = mAttachments.at(size_t(attachment)).get();
+		if (binding)
 		{
-		case Attachment::Color0:
-			return GL_COLOR_ATTACHMENT0;
-		case Attachment::Color1:
-			return GL_COLOR_ATTACHMENT1;
-		case Attachment::Color2:
-			return GL_COLOR_ATTACHMENT2;
-		case Attachment::DepthStencil:
-			return GL_DEPTH_STENCIL_ATTACHMENT;
-		default:
-			return GL_FALSE;
+			binding->Bind();
+		}
+	}
+
+	void OglFramebuffer::UnbindAttachment(FramebufferAttachment attachment)
+	{
+		OglFramebufferBinding* binding = mAttachments.at(size_t(attachment)).get();
+		if (binding)
+		{
+			binding->Unbind();
 		}
 	}
 
