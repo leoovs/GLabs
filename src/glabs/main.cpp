@@ -9,6 +9,7 @@
 #include "glabs/graphics/ogl_sampler.hpp"
 #include "glabs/graphics/ogl_texture2d.hpp"
 #include "glabs/rendering/camera.hpp"
+#include "glabs/rendering/forward_renderer.hpp"
 #include "glabs/rendering/spheric_camera_controller.hpp"
 #include "glabs/rendering/mesh.hpp"
 #include "glabs/rendering/obj_importer.hpp"
@@ -29,7 +30,7 @@ private:
 		OnWindowResize(window.GetWidth(), window.GetHeight());
 
 		mStormtrooper = ObjImporter()
-			.OpenFile("models/stormtrooper.obj")
+			.OpenFile("models/sphere.obj")
 			.LoadAllShapes()
 			.Build();
 
@@ -215,9 +216,109 @@ private:
 	glm::mat4 mModel = glm::mat4(1.0f);
 };
 
+class ForwardRenderingApp : public BasicApp
+{
+public:
+	void OnStart() override
+	{
+		mCamera.SetEyePosition({ 0.0f, 1.0f, 7.0f });
+		mController.IncrementAzimuth(glm::radians(270.0f));
+		mController.SetCamera(&mCamera);
+
+		mRenderer = std::make_unique<ForwardRenderer>();
+		mRenderer->SetCamera(mCamera);
+		mRenderer->SetProjection(mProjection);
+
+		mModel = ObjImporter()
+			.OpenFile("models/stormtrooper.obj")
+			.LoadAllShapes()
+			.Build();
+		mModelMaterial.LoadFromFile(MaterialKind::Albedo, "models/stormtrooper_d.tga");
+		mModelMaterial.LoadFromFile(MaterialKind::Normal, "models/stormtrooper_n.tga");
+		mModelMaterial.LoadFromFile(MaterialKind::Specular, "models/stormtrooper_s.tga", GraphicsFormat::R8G8B8A8_UNORM);
+
+		LoadShaders();
+
+		OnWindowResize(1280, 720);
+
+		glfwSetInputMode(GetWindow().GetNativeWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
+	void OnWindowResize(int32_t width, int32_t height) override
+	{
+		mRenderer->ResizeFrame({ width, height });
+		mProjection = glm::perspective(glm::radians(55.0f), float(width) / height, 1e-3f, 1e3f);
+	}
+
+	void OnMouseMove(float x, float y) override
+	{
+		mController.OnMouseMove(x, y);
+	}
+
+	void OnUpdate(float dt) override
+	{
+		if (IsKeyDown(GLFW_KEY_W))
+		{
+			mCamera.Move(mCamera.GetFront() * dt);
+		}
+		if (IsKeyDown(GLFW_KEY_S))
+		{
+			mCamera.Move(-mCamera.GetFront() * dt);
+		}
+		if (IsKeyDown(GLFW_KEY_A))
+		{
+			mCamera.Move(-mCamera.GetRight() * dt);
+		}
+		if (IsKeyDown(GLFW_KEY_D))
+		{
+			mCamera.Move(mCamera.GetRight() * dt);
+		}
+
+		mRenderer->BeginMainPass();
+		// mRenderer->SetMaterial(myMaterial);
+		mModel.ForEachShape(
+			[this](const Submesh& mesh)
+			{
+				mRenderer->DrawMesh(mesh, mModelMaterial, glm::mat4(1.0f));
+			}
+		);
+		mRenderer->EndMainPass();
+
+		mRenderer->BeginScreenPass();
+		mRenderer->DrawToScreen();
+		mRenderer->EndScreenPass();
+
+		GetWindow().Present();
+	}
+
+	void LoadShaders()
+	{
+		auto& mainPass = mRenderer->GetMainPassShaders();
+		auto& screenPass = mRenderer->GetScreenPassShaders();
+
+		mainPass.SetProgram(mShaders[ShaderStage::Vertex].FetchFromFile("glsl/fwd_main_pass_vert.glsl", "fwd_main_pass_vs"));
+		mainPass.SetProgram(mShaders[ShaderStage::Fragment].FetchFromFile("glsl/fwd_main_pass_frag.glsl", "fwd_main_pass_fs"));
+
+		screenPass.SetProgram(mShaders[ShaderStage::Vertex].FetchFromFile("glsl/fwd_screen_pass_vert.glsl", "fwd_screen_pass_vs"));
+		screenPass.SetProgram(mShaders[ShaderStage::Fragment].FetchFromFile("glsl/fwd_screen_pass_frag.glsl", "fwd_screen_pass_fs"));
+	}
+
+private:
+	ShaderLibrary mShaders;
+	std::unique_ptr<ForwardRenderer> mRenderer;
+
+	Camera mCamera;
+	SphericCameraController mController;
+	glm::mat4 mProjection;
+
+	Mesh mModel;
+	Material mModelMaterial;
+};
+
 int main()
 {
 	glabs::GlfwLife::Params glfwParams;
+
 	glfwParams.Version = { 4, 6 };
 	glfwParams.CoreProfile = true;
 	glfwParams.EnableDebugContext = true;
@@ -225,7 +326,7 @@ int main()
 	glabs::GlfwLife glfw(std::move(glfwParams));
 	{
 		glabs::AppContainer()
-			.Bind<SkyboxApp>()
+			.Bind<ForwardRenderingApp>()
 			.Configure()
 			.Run();
 	}

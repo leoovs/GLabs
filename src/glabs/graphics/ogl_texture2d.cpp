@@ -66,7 +66,7 @@ namespace glabs
 		glGenerateTextureMipmap(mNativeTexture2DArray);
 	}
 
-	void OglTexture2D::BindToPipeline(int32_t unit)
+	void OglTexture2D::BindToPipeline(int32_t unit) const
 	{
 		glBindTextureUnit(GLuint(unit), mNativeTexture2DArray);
 	}

@@ -34,7 +34,7 @@ namespace glabs
 		void SetData(const void* data, int32_t arrayIndex = 0);
 
 		void GenerateMipMaps();
-		void BindToPipeline(int32_t unit);
+		void BindToPipeline(int32_t unit) const;
 
 	private:
 		void CreateNativeTexture2DArray();
